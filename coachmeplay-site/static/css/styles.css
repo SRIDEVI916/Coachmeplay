@@ -1,0 +1,224 @@
+/* Athletic Performance Card - Complete CSS */
+.performance-card {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 320px;
+  height: 280px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 32px rgba(26, 60, 108, 0.1);
+  border: 2px solid transparent;
+}
+
+/* Animated background gradient */
+.performance-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(57, 255, 20, 0.1) 0%, 
+    rgba(0, 128, 255, 0.1) 50%, 
+    rgba(255, 69, 0, 0.1) 100%);
+  transition: left 0.6s ease;
+  z-index: 1;
+}
+
+/* Hover effects */
+.performance-card:hover {
+  transform: translateY(-15px) scale(1.02);
+  border-color: #39FF14;
+  box-shadow: 0 20px 60px rgba(57, 255, 20, 0.2);
+}
+
+.performance-card:hover::before {
+  left: 0;
+}
+
+/* Card content wrapper */
+.card-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Sport icon with animation */
+.sport-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.4s ease;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.performance-card:hover .sport-icon {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 6px 12px rgba(57, 255, 20, 0.3));
+}
+
+/* Card title */
+.card-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a3c6c;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.performance-card:hover .card-title {
+  color: #2c5282;
+}
+
+/* Performance stats */
+.performance-stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.stat-item {
+  text-align: center;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.performance-card:hover .stat-item {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2c5282;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.2rem;
+}
+
+/* Progress bar animation */
+.progress-container {
+  margin: 1.5rem 0 1rem 0;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #39FF14, #0080FF);
+  border-radius: inherit;
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* Shimmer effect on progress bar */
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255,255,255,0.6), 
+    transparent);
+  transform: translateX(-100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Card hover animation triggers */
+.performance-card:hover .progress-bar-fill {
+  width: 78%; /* Simulated progress */
+}
+
+/* Action button */
+.card-action {
+  background: linear-gradient(135deg, #39FF14, #0080FF);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-action::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255,255,255,0.3), 
+    transparent);
+  transition: left 0.5s;
+}
+
+.card-action:hover::before {
+  left: 100%;
+}
+
+.card-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(57, 255, 20, 0.4);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .performance-card {
+    width: 100%;
+    max-width: 300px;
+    height: 260px;
+    padding: 1.5rem;
+  }
+  
+  .sport-icon {
+    font-size: 3rem;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+  }
+}

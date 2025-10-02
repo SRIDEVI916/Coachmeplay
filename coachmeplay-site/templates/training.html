@@ -1,0 +1,200 @@
+<!-- templates/training.html -->
+{% extends "base.html" %}
+
+{% block title %}Training Plans - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-title">Personalized Training Plans</h2>
+
+    <!-- Current Plan -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">🏋️ Current Training Plan</h3>
+        <div class="card" style="background: linear-gradient(135deg, var(--secondary), #66BB6A); color: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <h3>Strength & Fat Loss Program</h3>
+                    <p>Created by: Sarah Johnson</p>
+                    <p>Duration: 12 weeks | Week 6/12 completed</p>
+                    <p>Focus: Weight loss, muscle building, endurance</p>
+                </div>
+                <div style="text-align: center; min-width: 120px;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">50%</div>
+                    <div style="background: rgba(255,255,255,0.3); height: 8px; width: 100px; border-radius: 4px; margin: 0 auto;">
+                        <div style="background: white; height: 100%; width: 50%; border-radius: 4px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- This Week's Schedule -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">📅 This Week's Workout Schedule</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+            <div class="card" style="text-align: center; background: #C8E6C9;">
+                <h4>Monday</h4>
+                <p style="font-weight: bold; color: #2E7D32;">✓ COMPLETED</p>
+                <p>Upper Body Strength</p>
+                <p>75 minutes</p>
+                <small>With Sarah Johnson</small>
+            </div>
+            <div class="card" style="text-align: center; background: #E3F2FD;">
+                <h4>Tuesday</h4>
+                <p style="font-weight: bold; color: var(--primary-light);">TODAY</p>
+                <p>HIIT Cardio</p>
+                <p>45 minutes</p>
+                <small>6:00 PM</small>
+                <button class="btn btn-primary" style="margin-top: 0.5rem; font-size: 0.9rem;" onclick="window.CoachMePlay.showNotification('Starting HIIT Cardio workout...', 'info')">Start Workout</button>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h4>Wednesday</h4>
+                <p style="font-weight: bold;">SCHEDULED</p>
+                <p>Lower Body Strength</p>
+                <p>60 minutes</p>
+                <small>With Sarah Johnson</small>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h4>Thursday</h4>
+                <p style="font-weight: bold;">SCHEDULED</p>
+                <p>Active Recovery</p>
+                <p>30 minutes</p>
+                <small>Yoga/Stretching</small>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h4>Friday</h4>
+                <p style="font-weight: bold;">SCHEDULED</p>
+                <p>Full Body Circuit</p>
+                <p>50 minutes</p>
+                <small>With Sarah Johnson</small>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h4>Saturday</h4>
+                <p style="font-weight: bold;">SCHEDULED</p>
+                <p>Cardio + Core</p>
+                <p>40 minutes</p>
+                <small>Individual workout</small>
+            </div>
+            <div class="card" style="text-align: center; background: #FFF3E0;">
+                <h4>Sunday</h4>
+                <p style="font-weight: bold; color: #F57C00;">REST DAY</p>
+                <p>Recovery</p>
+                <p>Optional light walk</p>
+                <small>Stay active!</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Workout Detail -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">💪 Today's Workout: HIIT Cardio</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div class="card">
+                <h4>Workout Breakdown</h4>
+                <div style="margin: 1.5rem 0;">
+                    <div style="border-left: 4px solid var(--secondary); padding-left: 1rem; margin-bottom: 1rem;">
+                        <h5>Warm-up (5 minutes)</h5>
+                        <p>• Light jogging in place - 2 minutes</p>
+                        <p>• Arm circles and leg swings - 2 minutes</p>
+                        <p>• Dynamic stretching - 1 minute</p>
+                    </div>
+                    <div style="border-left: 4px solid #FF9800; padding-left: 1rem; margin-bottom: 1rem;">
+                        <h5>Main Workout (35 minutes)</h5>
+                        <p><strong>Round 1 (Repeat 4 times):</strong></p>
+                        <p>• Burpees - 30 seconds, rest 10 seconds</p>
+                        <p>• Jump squats - 30 seconds, rest 10 seconds</p>
+                        <p>• Mountain climbers - 30 seconds, rest 10 seconds</p>
+                        <p>• Rest 1 minute between rounds</p>
+
+                        <p style="margin-top: 1rem;"><strong>Round 2 (Repeat 3 times):</strong></p>
+                        <p>• High knees - 45 seconds, rest 15 seconds</p>
+                        <p>• Push-ups - 45 seconds, rest 15 seconds</p>
+                        <p>• Plank hold - 45 seconds, rest 15 seconds</p>
+                        <p>• Rest 1 minute between rounds</p>
+                    </div>
+                    <div style="border-left: 4px solid var(--primary-light); padding-left: 1rem;">
+                        <h5>Cool-down (5 minutes)</h5>
+                        <p>• Walking in place - 2 minutes</p>
+                        <p>• Static stretching - 3 minutes</p>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem;" onclick="window.CoachMePlay.showNotification('HIIT Cardio workout started! Get ready to sweat!', 'success')">🚀 Start This Workout</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="card" style="margin-bottom: 1rem;">
+                    <h4>Workout Stats</h4>
+                    <p><strong>Duration:</strong> 45 minutes</p>
+                    <p><strong>Difficulty:</strong> Intermediate</p>
+                    <p><strong>Est. Calories:</strong> 400-450 kcal</p>
+                    <p><strong>Equipment:</strong> None required</p>
+                    <p><strong>Focus:</strong> Cardio, Fat burn</p>
+                </div>
+
+                <div class="card">
+                    <h4>Coach Notes</h4>
+                    <p style="font-style: italic;">"Focus on maintaining proper form throughout. If you need to modify any exercise, that's perfectly fine! Listen to your body."</p>
+                    <p style="font-weight: bold; margin-top: 1rem;">- Sarah Johnson</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Workouts Library -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">🎥 Workout Video Library</h3>
+        <div class="cards-grid">
+            <div class="card">
+                <div style="background: #f0f0f0; height: 150px; border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">▶️</div>
+                <h4>Beginner's Strength Training</h4>
+                <p><strong>Duration:</strong> 25 minutes</p>
+                <p><strong>Level:</strong> Beginner</p>
+                <p><strong>Equipment:</strong> Dumbbells</p>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Playing: Beginner\'s Strength Training video.', 'info')">Watch Now</button>
+            </div>
+
+            <div class="card">
+                <div style="background: #f0f0f0; height: 150px; border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">▶️</div>
+                <h4>Core Strengthening Routine</h4>
+                <p><strong>Duration:</strong> 20 minutes</p>
+                <p><strong>Level:</strong> All levels</p>
+                <p><strong>Equipment:</strong> Mat only</p>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Playing: Core Strengthening Routine video.', 'info')">Watch Now</button>
+            </div>
+
+            <div class="card">
+                <div style="background: #f0f0f0; height: 150px; border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem;">▶️</div>
+                <h4>Morning Yoga Flow</h4>
+                <p><strong>Duration:</strong> 15 minutes</p>
+                <p><strong>Level:</strong> Beginner</p>
+                <p><strong>Equipment:</strong> Yoga mat</p>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Playing: Morning Yoga Flow video.', 'info')">Watch Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Plans -->
+    <div class="card">
+        <h3>🏃 Explore Other Training Plans</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <div style="border: 2px solid var(--border-color); padding: 1rem; border-radius: 10px;">
+                <h4>Weight Loss Intensive</h4>
+                <p>8-week program focusing on fat loss</p>
+                <button class="btn btn-secondary" onclick="window.CoachMePlay.showNotification('Viewing Weight Loss Intensive plan details.', 'info')">View Plan</button>
+            </div>
+            <div style="border: 2px solid var(--border-color); padding: 1rem; border-radius: 10px;">
+                <h4>Muscle Building</h4>
+                <p>12-week strength and mass program</p>
+                <button class="btn btn-secondary" onclick="window.CoachMePlay.showNotification('Viewing Muscle Building plan details.', 'info')">View Plan</button>
+            </div>
+            <div style="border: 2px solid var(--border-color); padding: 1rem; border-radius: 10px;">
+                <h4>Athletic Performance</h4>
+                <p>Sport-specific training program</p>
+                <button class="btn btn-secondary" onclick="window.CoachMePlay.showNotification('Viewing Athletic Performance plan details.', 'info')">View Plan</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

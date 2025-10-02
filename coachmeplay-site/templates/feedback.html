@@ -1,0 +1,254 @@
+<!-- templates/feedback.html -->
+{% extends "base.html" %}
+
+{% block title %}Feedback - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-title">Platform Feedback</h2>
+
+    <!-- Feedback Form -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">💭 Share Your Feedback</h3>
+        <div class="form-container">
+            <div class="form-group">
+                <label for="feedbackCategory">Feedback Category</label>
+                <select class="form-control" id="feedbackCategory">
+                    <option value="">Select Category</option>
+                    <option value="general">General Platform Experience</option>
+                    <option value="coach">Coach Booking System</option>
+                    <option value="venue">Venue Booking System</option>
+                    <option value="progress">Progress Tracking</option>
+                    <option value="market">Marketplace/Shopping</option>
+                    <option value="community">Community Features</option>
+                    <option value="tech">Technical Issues</option>
+                    <option value="feature">Feature Requests</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Overall Rating</label>
+                <div id="feedbackRatingStars" style="font-size: 2rem; margin: 1rem 0;">
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(1)" style="cursor: pointer; color: #ddd;">⭐</span>
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(2)" style="cursor: pointer; color: #ddd;">⭐</span>
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(3)" style="cursor: pointer; color: #ddd;">⭐</span>
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(4)" style="cursor: pointer; color: #ddd;">⭐</span>
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(5)" style="cursor: pointer; color: #ddd;">⭐</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="feedbackPositive">What did you like most?</label>
+                <textarea class="form-control" id="feedbackPositive" rows="3" placeholder="Tell us what worked well for you..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="feedbackNegative">What could be improved?</label>
+                <textarea class="form-control" id="feedbackNegative" rows="3" placeholder="Share your suggestions for improvement..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="feedbackRecommend">Would you recommend CoachMePlay to others?</label>
+                <select class="form-control" id="feedbackRecommend">
+                    <option value="">Please select</option>
+                    <option value="yes_def">Definitely yes</option>
+                    <option value="yes_prob">Probably yes</option>
+                    <option value="maybe">Maybe</option>
+                    <option value="no_prob">Probably no</option>
+                    <option value="no_def">Definitely no</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+        </div>
+    </div>
+
+    <!-- Quick Feedback Options -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">⚡ Quick Feedback</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div class="card quick-feedback-card" onclick="window.CoachMePlay.quickFeedback('excellent')">
+                <div class="feedback-icon">😍</div>
+                <h4>Excellent Experience</h4>
+                <p>Everything was perfect!</p>
+            </div>
+            <div class="card quick-feedback-card" onclick="window.CoachMePlay.quickFeedback('good')">
+                <div class="feedback-icon">👍</div>
+                <h4>Good Overall</h4>
+                <p>Happy with the service</p>
+            </div>
+            <div class="card quick-feedback-card" onclick="window.CoachMePlay.quickFeedback('okay')">
+                <div class="feedback-icon">😐</div>
+                <h4>Okay Experience</h4>
+                <p>Room for improvement</p>
+            </div>
+            <div class="card quick-feedback-card" onclick="window.CoachMePlay.quickFeedback('poor')">
+                <div class="feedback-icon">😟</div>
+                <h4>Needs Work</h4>
+                <p>Several issues encountered</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Statistics -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">📊 Community Feedback Summary</h3>
+        <div class="cards-grid">
+            <div class="card" style="text-align: center;">
+                <h4>Overall Platform Rating</h4>
+                <div style="font-size: 3rem; color: var(--secondary); margin: 1rem 0;">4.6/5</div>
+                <p>Based on 1,247 user reviews</p>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>5 ⭐</span>
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-fill" style="width: 68%; background-color: var(--secondary);"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>4 ⭐</span>
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-fill" style="width: 24%; background-color: var(--secondary);"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>3 ⭐</span>
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-fill" style="width: 6%; background-color: #FF9800;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>2 ⭐</span>
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-fill" style="width: 2%; background-color: var(--danger);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4>Most Appreciated Features</h4>
+                <div style="margin-top: 1rem;">
+                    <div class="feature-rating-item">
+                        <span>Coach Booking</span>
+                        <div class="feature-rating-bar">
+                            <div class="feature-rating-fill" style="width: 87%; background-color: var(--secondary);"></div>
+                        </div>
+                        <span>87%</span>
+                    </div>
+                    <div class="feature-rating-item">
+                        <span>Progress Tracking</span>
+                        <div class="feature-rating-bar">
+                            <div class="feature-rating-fill" style="width: 82%; background-color: var(--primary-light);"></div>
+                        </div>
+                        <span>82%</span>
+                    </div>
+                    <div class="feature-rating-item">
+                        <span>Venue Booking</span>
+                        <div class="feature-rating-bar">
+                            <div class="feature-rating-fill" style="width: 78%; background-color: #FF9800;"></div>
+                        </div>
+                        <span>78%</span>
+                    </div>
+                    <div class="feature-rating-item">
+                        <span>Community</span>
+                        <div class="feature-rating-bar">
+                            <div class="feature-rating-fill" style="width: 71%; background-color: #9C27B0;"></div>
+                        </div>
+                        <span>71%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4>Improvement Requests</h4>
+                <div style="margin-top: 1rem;">
+                    <p>📱 <strong>Mobile App</strong> - 45% of users</p>
+                    <p>🔔 <strong>Better Notifications</strong> - 32% of users</p>
+                    <p>💬 <strong>In-app Messaging</strong> - 28% of users</p>
+                    <p>📊 <strong>Advanced Analytics</strong> - 24% of users</p>
+                    <p>🏆 <strong>Achievement System</strong> - 19% of users</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Feedback -->
+    <div class="card">
+        <h3>💬 Recent User Feedback</h3>
+        <div style="margin-top: 2rem;">
+            <div class="feedback-item">
+                <div class="feedback-header">
+                    <strong>Love the comprehensive approach!</strong>
+                    <div class="feedback-rating-date">
+                        <span>⭐⭐⭐⭐⭐</span>
+                        <small>2 days ago</small>
+                    </div>
+                </div>
+                <p>"Finally found a platform that has everything - coaches, venues, nutrition, and progress tracking all in one place."</p>
+                <small class="verified-user">✓ Verified User</small>
+            </div>
+
+            <div class="feedback-item">
+                <div class="feedback-header">
+                    <strong>Great coaches, easy booking</strong>
+                    <div class="feedback-rating-date">
+                        <span>⭐⭐⭐⭐</span>
+                        <small>4 days ago</small>
+                    </div>
+                </div>
+                <p>"The coach quality is excellent and booking is straightforward. Would love to see a mobile app soon!"</p>
+                <small class="verified-user">✓ Verified User</small>
+            </div>
+
+            <div class="feedback-item">
+                <div class="feedback-header">
+                    <strong>Helped me stay consistent</strong>
+                    <div class="feedback-rating-date">
+                        <span>⭐⭐⭐⭐⭐</span>
+                        <small>1 week ago</small>
+                    </div>
+                </div>
+                <p>"The progress tracking and community challenges keep me motivated. Lost 5kg in 2 months!"</p>
+                <small class="verified-user">✓ Verified User</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitFeedback() {
+        const category = document.getElementById('feedbackCategory').value;
+        const positive = document.getElementById('feedbackPositive').value;
+        const negative = document.getElementById('feedbackNegative').value;
+        const recommend = document.getElementById('feedbackRecommend').value;
+        // window.CoachMePlay.currentRating is set by setRating
+
+        if (!category) {
+            window.CoachMePlay.showNotification('Please select a feedback category.', 'error');
+            return;
+        }
+        if (window.CoachMePlay.currentRating === 0) {
+             window.CoachMePlay.showNotification('Please provide an overall rating.', 'error');
+             return;
+        }
+        if (!positive && !negative) {
+            window.CoachMePlay.showNotification('Please share what you liked or what could be improved.', 'error');
+            return;
+        }
+        if (!recommend) {
+            window.CoachMePlay.showNotification('Please indicate if you would recommend us.', 'error');
+            return;
+        }
+
+        window.CoachMePlay.showNotification('Thank you for your detailed feedback! It helps us improve CoachMePlay.', 'success');
+        // Reset form
+        document.getElementById('feedbackCategory').value = '';
+        document.getElementById('feedbackPositive').value = '';
+        document.getElementById('feedbackNegative').value = '';
+        document.getElementById('feedbackRecommend').value = '';
+        if (window.CoachMePlay && typeof window.CoachMePlay.setRating === 'function') {
+            window.CoachMePlay.setRating(0);
+        } else {
+            const stars = document.querySelectorAll('#feedbackRatingStars .rating-star');
+             stars.forEach(star => star.style.color = '#ddd');
+        }
+        if (window.CoachMePlay) window.CoachMePlay.currentRating = 0;
+    }
+</script>
+{% endblock %}

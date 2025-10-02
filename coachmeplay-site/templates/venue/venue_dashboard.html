@@ -1,0 +1,171 @@
+<!-- templates/venue/venue_dashboard.html -->
+{% extends "base.html" %}
+
+{% block title %}Venue Dashboard - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="container">
+        <h1>Welcome, {{ user_name }}! 🏟️</h1>
+        <p>Manage your venue bookings, availability, and client interactions.</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Dashboard Navigation -->
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <button class="btn btn-outline" onclick="showVenueSection('overview')">Overview</button>
+        <button class="btn btn-outline" onclick="showVenueSection('bookings')">Manage Bookings</button>
+        <button class="btn btn-outline" onclick="showVenueSection('availability')">Set Availability</button>
+        <button class="btn btn-outline" onclick="showVenueSection('clients')">Client Messages</button>
+        <button class="btn btn-outline" onclick="showVenueSection('earnings')">Earnings</button>
+    </div>
+
+    <!-- Dashboard Sections -->
+    <div id="venue-overview" class="dashboard-section active">
+        <h2 class="section-title">Venue Dashboard</h2>
+        <div class="cards-grid">
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">📅</div>
+                <h3>Manage Bookings</h3>
+                <p>View, confirm, or cancel upcoming reservations.</p>
+                <button class="btn btn-primary" onclick="showVenueSection('bookings')">View Bookings</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">🕒</div>
+                <h3>Set Availability</h3>
+                <p>Define when your facilities are open for booking.</p>
+                <button class="btn btn-primary" onclick="showVenueSection('availability')">Set Hours</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">💬</div>
+                <h3>Client Messages</h3>
+                <p>Communicate with clients about bookings.</p>
+                <button class="btn btn-primary" onclick="showVenueSection('clients')">View Messages</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">💰</div>
+                <h3>Earnings</h3>
+                <p>Track your revenue and upcoming payments.</p>
+                <button class="btn btn-primary" onclick="showVenueSection('earnings')">View Earnings</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">📸</div>
+                <h3>Gallery</h3>
+                <p>Showcase your facilities with photos.</p>
+                <button class="btn btn-primary">Manage Photos</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">⭐</div>
+                <h3>Reviews</h3>
+                <p>See what clients are saying about your venue.</p>
+                <button class="btn btn-primary">View Reviews</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookings" class="dashboard-section">
+        <h2 class="section-title">Upcoming Bookings</h2>
+        <div class="card">
+            <h3>Booking #V12345 - Tennis Court 1</h3>
+            <p><strong>Client:</strong> Alex Runner</p>
+            <p><strong>Date & Time:</strong> Thu, Oct 26, 2023, 6:00 AM - 8:00 AM</p>
+            <p><strong>Status:</strong> <span style="color: var(--secondary); font-weight: bold;">Confirmed</span></p>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-secondary">View Details</button>
+                <button class="btn btn-outline">Send Message</button>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Booking #V12346 - Basketball Court</h3>
+            <p><strong>Client:</strong> Elite Basketball Team</p>
+            <p><strong>Date & Time:</strong> Thu, Oct 26, 2023, 8:00 PM - 10:00 PM</p>
+            <p><strong>Status:</strong> Pending Confirmation</p>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-secondary">Confirm</button>
+                <button class="btn btn-outline" style="border-color: var(--danger); color: var(--danger);">Cancel</button>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top: 1rem;">View All Bookings</button>
+    </div>
+
+    <div id="availability" class="dashboard-section">
+        <h2 class="section-title">Set Facility Availability</h2>
+        <div class="card">
+            <h3>City Sports Complex - Tennis Courts</h3>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #ddd; margin-top: 1rem;">
+                <div style="background: white; padding: 0.75rem; text-align: center; font-weight: bold; font-size: 0.8rem;">Sun</div>
+                <div style="background: white; padding: 0.75rem; text-align: center; font-weight: bold; font-size: 0.8rem;">Mon</div>
+                <div style="background: white; padding: 0.75rem; text-align: center; font-weight: bold; font-size: 0.8rem;">Tue</div>
+                <div style="background: white; padding: 0.75rem; text-align: center; font-weight: bold; font-size: 0.8rem;">Wed</div>
+                <div style="background: white; padding: 0.75rem; text-align: center; font-weight: bold; font-size: 0.8rem;">Thu</div>
+                <div style="background: white; padding: 0.75rem; text-align: center; font-weight: bold; font-size: 0.8rem;">Fri</div>
+                <div style="background: white; padding: 0.75rem; text-align: center; font-weight: bold; font-size: 0.8rem;">Sat</div>
+
+                <div style="background: white; padding: 0.75rem; text-align: center; font-size: 0.8rem;">Closed</div>
+                <div style="background: #c8e6c9; padding: 0.75rem; text-align: center; font-size: 0.8rem; cursor: pointer;">6AM-10PM</div>
+                <div style="background: #c8e6c9; padding: 0.75rem; text-align: center; font-size: 0.8rem; cursor: pointer;">6AM-10PM</div>
+                <div style="background: #c8e6c9; padding: 0.75rem; text-align: center; font-size: 0.8rem; cursor: pointer;">6AM-10PM</div>
+                <div style="background: #c8e6c9; padding: 0.75rem; text-align: center; font-size: 0.8rem; cursor: pointer;">6AM-10PM</div>
+                <div style="background: #fff9c4; padding: 0.75rem; text-align: center; font-size: 0.8rem; cursor: pointer;">2PM-10PM</div> <!-- Partial -->
+                <div style="background: #ffcdd2; padding: 0.75rem; text-align: center; font-size: 0.8rem;">Closed</div> <!-- Booked/Unavailable -->
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+                <span><span style="display: inline-block; width: 15px; height: 15px; background: #c8e6c9; margin-right: 5px;"></span>Available</span>
+                <span><span style="display: inline-block; width: 15px; height: 15px; background: #fff9c4; margin-right: 5px;"></span>Partially Available</span>
+                <span><span style="display: inline-block; width: 15px; height: 15px; background: #ffcdd2; margin-right: 5px;"></span>Unavailable/Closed</span>
+            </div>
+             <button class="btn btn-primary" style="margin-top: 1rem;">Save Changes</button>
+        </div>
+    </div>
+
+    <div id="earnings" class="dashboard-section">
+        <h2 class="section-title">Earnings Summary</h2>
+        <div class="card">
+            <h3>October 2023 Earnings</h3>
+            <p style="font-size: 2rem; font-weight: bold; color: var(--primary);">₹45,200</p>
+            <p>Total Revenue</p>
+            <div style="margin-top: 1rem;">
+                <p><strong>Pending Payments:</strong> ₹8,500</p>
+                <p><strong>Confirmed Bookings:</strong> 42</p>
+            </div>
+        </div>
+        <button class="btn btn-outline" style="margin-top: 1rem;">View Detailed Report</button>
+    </div>
+
+    <div id="clients" class="dashboard-section">
+        <h2 class="section-title">Client Messages</h2>
+        <div class="card">
+            <h3>Message from Alex Runner</h3>
+            <p><strong>Subject:</strong> Booking Confirmation for Thursday</p>
+            <p>Hi, just wanted to confirm the booking for tomorrow morning. Looking forward to it!</p>
+            <p><em>Sent: Oct 24, 2023, 9:15 PM</em></p>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-secondary">Reply</button>
+                <button class="btn btn-outline">Mark as Read</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function showVenueSection(sectionId) {
+        document.querySelectorAll('.dashboard-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            // Fallback for sections with different IDs
+            const fallbackSection = document.getElementById('venue-' + sectionId);
+            if(fallbackSection) {
+                 fallbackSection.classList.add('active');
+                 fallbackSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    }
+</script>
+{% endblock %}

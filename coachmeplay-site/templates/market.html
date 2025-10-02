@@ -1,0 +1,262 @@
+<!-- templates/market.html -->
+{% extends "base.html" %}
+
+{% block title %}Sports Marketplace - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-title">Sports Equipment & Accessories</h2>
+
+    <!-- Search + Filter -->
+    <div class="filter-bar">
+        <input type="text" class="form-control" placeholder="🔍 Search products..." id="productSearch">
+        <select class="form-control" id="productCategory">
+            <option value="">All Categories</option>
+            <option value="tennis">Tennis</option>
+            <option value="fitness">Fitness</option>
+            <option value="nutrition">Nutrition</option>
+            <option value="yoga">Yoga</option>
+            <option value="swimming">Swimming</option>
+        </select>
+        <button class="btn btn-primary" onclick="searchProducts()">Search</button>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="cards-grid">
+
+        <!-- Product 1 -->
+        <div class="product-card">
+            <img src="/static/images/p11.jpg" alt="Tennis Racket">
+            <div class="product-info">
+                <h4 class="product-title">Professional Tennis Racket</h4>
+                <p class="product-brand">by Vega</p>
+                <p class="product-price">₹15,999</p>
+                <p class="product-rating">⭐⭐⭐⭐⭐ 4.8/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('Professional Tennis Racket', 15999)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('Professional Tennis Racket', 15999)">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product-card">
+            <img src="/static/images/p10.jpg" alt="Cricket Set">
+            <div class="product-info">
+                <h4 class="product-title">Cricket Set Up</h4>
+                <p class="product-brand">by SymActive</p>
+                <p class="product-price">₹30,999</p>
+                <p class="product-rating">⭐⭐⭐⭐⭐ 4.9/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('Cricket Set Up', 30999)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('Cricket Set Up', 30999)">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product-card">
+            <img src="/static/images/bicycle.jpg" alt="Bicycle">
+            <div class="product-info">
+                <h4 class="product-title">Bicycle</h4>
+                <p class="product-brand">by RockRider</p>
+                <p class="product-price">₹16,999</p>
+                <p class="product-rating">⭐⭐⭐⭐ 4.6/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('Bicycle', 16999)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('Bicycle', 16999)">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="product-card">
+            <img src="/static/images/p3.jpg" alt="Skipping Rope">
+            <div class="product-info">
+                <h4 class="product-title">Skipping Rope</h4>
+                <p class="product-brand">by BOLDFIT</p>
+                <p class="product-price">₹999</p>
+                <p class="product-rating">⭐⭐⭐⭐⭐ 4.7/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('Skipping Rope', 999)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('Skipping Rope', 999)">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Product 5 -->
+        <div class="product-card">
+            <img src="/static/images/p4.jpg" alt="Dumbbell">
+            <div class="product-info">
+                <h4 class="product-title">2kg Gym Dumbbell</h4>
+                <p class="product-brand">by Lifelong</p>
+                <p class="product-price">₹2,499</p>
+                <p class="product-rating">⭐⭐⭐⭐ 4.3/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('2kg Gym Dumbbell', 2499)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('2kg Gym Dumbbell', 2499)">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Product 6 -->
+        <div class="product-card">
+            <img src="/static/images/p6.jpg" alt="Hand Gripper">
+            <div class="product-info">
+                <h4 class="product-title">Adjustable Hand Grip Strengthener</h4>
+                <p class="product-brand">by Bodyband</p>
+                <p class="product-price">₹199</p>
+                <p class="product-rating">⭐⭐⭐⭐ 4.4/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('Hand Gripper', 199)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('Hand Gripper', 199)">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Product 7 -->
+        <div class="product-card">
+            <img src="/static/images/p7.jpg" alt="Click and Catch Game">
+            <div class="product-info">
+                <h4 class="product-title">Click and Catch Game</h4>
+                <p class="product-brand">by Speedo</p>
+                <p class="product-price">₹299</p>
+                <p class="product-rating">⭐⭐⭐⭐ 4.4/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('Click and Catch Game', 299)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('Click and Catch Game', 299)">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Product 8 -->
+        <div class="product-card">
+            <img src="/static/images/p8.jpg" alt="Gloves">
+            <div class="product-info">
+                <h4 class="product-title">Anti-Static Gloves</h4>
+                <p class="product-brand">by Club</p>
+                <p class="product-price">₹4,899</p>
+                <p class="product-rating">⭐⭐⭐⭐ 4.4/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('Anti-Static Gloves', 4899)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('Anti-Static Gloves', 4899)">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Product 9 -->
+        <div class="product-card">
+            <img src="/static/images/p9.jpg" alt="Cricket Bat">
+            <div class="product-info">
+                <h4 class="product-title">Cricket Bat</h4>
+                <p class="product-brand">by CEAT</p>
+                <p class="product-price">₹2,499</p>
+                <p class="product-rating">⭐⭐⭐⭐ 4.5/5</p>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="CoachMePlay.addToCart('Cricket Bat', 2499)">Add to Cart</button>
+                <button class="btn btn-secondary" onclick="buyNow('Cricket Bat', 2499)">Buy Now</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- JS -->
+<script>
+    // --------- Polyfill CoachMePlay cart helpers (shared across pages) ---------
+    window.CoachMePlay = window.CoachMePlay || (function () {
+        const KEY = "cartItems";
+        const read = () => JSON.parse(localStorage.getItem(KEY) || "[]");
+        const write = (items) => localStorage.setItem(KEY, JSON.stringify(items));
+
+        return {
+            showNotification: (msg, type='info') => {
+                // Replace with your toast system if available
+                console.log(`[${type.toUpperCase()}]`, msg);
+                if (!document.querySelector('.toast-enabled')) alert(msg);
+            },
+            getCart: read,
+            setCart: write,
+            addToCart: (name, price, qty=1) => {
+                let cart = read();
+                const idx = cart.findIndex(i => i.name === name);
+                if (idx > -1) cart[idx].quantity += qty;
+                else cart.push({ name, price: Number(price), quantity: qty });
+                write(cart);
+                window.CoachMePlay.showNotification(`${name} added to cart`, 'success');
+            },
+            removeByName: (name) => {
+                let cart = read().filter(i => i.name !== name);
+                write(cart);
+            },
+            clearCart: () => write([])
+        };
+    })();
+
+    function searchProducts() {
+        const query = document.getElementById('productSearch').value;
+        const category = document.getElementById('productCategory').value;
+        CoachMePlay.showNotification(`Searching for '${query}' in category '${category}'...`, 'info');
+    }
+
+    // Buy Now = add item (qty 1) then go straight to cart
+    function buyNow(productName, price) {
+        CoachMePlay.addToCart(productName, price, 1);
+        window.location.href = "/cart";
+    }
+</script>
+
+<!-- CSS -->
+<style>
+/* Filter bar */
+.filter-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Product Cards like Decathlon */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1.5rem;
+}
+
+.product-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.product-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+}
+
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.product-info { margin-bottom: 1rem; }
+.product-title { font-size: 1rem; font-weight: 600; color: #222; }
+.product-brand { font-size: 0.9rem; color: #777; }
+.product-price { font-size: 1.1rem; font-weight: bold; color: #0078d4; }
+.product-rating { font-size: 0.85rem; color: #555; }
+
+.product-actions {
+    display: flex; gap: 0.5rem; justify-content: center;
+}
+</style>
+{% endblock %}

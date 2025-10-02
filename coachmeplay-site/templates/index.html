@@ -1,0 +1,58 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block title %}Home - CoachMePlay{% endblock %}
+
+{% block content %}
+<div style="background: linear-gradient(rgba(26, 60, 108, 0.85), rgba(26, 60, 108, 0.9)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover; color: white; text-align: center; padding: 5rem 1rem; margin-top: calc(-1 * var(--navbar-height)); padding-top: calc(5rem + var(--navbar-height));">
+    <div class="container">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem;">Elevate Your Game</h1>
+        <p style="font-size: 1.3rem; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+            Your personalized sports coaching platform. Book venues, track goals, find coaches, and shop gear - all in one place.
+        </p>
+        {% if not session.user_id %}
+            <a href="{{ url_for('register') }}" class="btn btn-secondary" style="margin: 0 0.5rem;">Get Started</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline" style="margin: 0 0.5rem; color: white; border-color: white;">Login</a>
+        {% else %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Go to Dashboard</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container" style="padding: 3rem 0;">
+    <h2 class="section-title">Why Choose CoachMePlay?</h2>
+    <div class="cards-grid">
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">👨‍🏫</div>
+            <h3 style="color: var(--primary);">Personalized Coaching</h3>
+            <p>Connect with expert coaches tailored to your sport and goals.</p>
+        </div>
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📍</div>
+            <h3 style="color: var(--primary);">Venue Booking</h3>
+            <p>Find and book the perfect courts and fields near you.</p>
+        </div>
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📈</div>
+            <h3 style="color: var(--primary);">Track Progress</h3>
+            <p>Monitor your improvements with detailed analytics.</p>
+        </div>
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🛒</div>
+            <h3 style="color: var(--primary);">Shop Gear</h3>
+            <p>Get the equipment you need from our curated marketplace.</p>
+        </div>
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🥗</div>
+            <h3 style="color: var(--primary);">Diet Plans</h3>
+            <p>Access personalized nutrition advice for peak performance.</p>
+        </div>
+        <div class="card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+            <h3 style="color: var(--primary);">Community</h3>
+            <p>Join a vibrant community of athletes and coaches.</p>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

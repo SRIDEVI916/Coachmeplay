@@ -1,0 +1,217 @@
+<!-- templates/reviews.html -->
+{% extends "base.html" %}
+
+{% block title %}Reviews & Feedback - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-title">Reviews & Feedback</h2>
+
+    <!-- Write a Review -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">✍️ Write a Review</h3>
+        <div class="form-container">
+            <div class="form-group">
+                <label>Review Type</label>
+                <select class="form-control" id="reviewType">
+                    <option value="">Select what to review</option>
+                    <option value="coach">Coach/Trainer</option>
+                    <option value="venue">Sports Venue</option>
+                    <option value="session">Training Session</option>
+                    <option value="platform">Platform Experience</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Coach/Venue Name</label>
+                <input type="text" id="reviewTarget" class="form-control" placeholder="Enter coach or venue name">
+            </div>
+            <div class="form-group">
+                <label>Rating</label>
+                <div id="ratingStars" style="font-size: 2rem; margin: 1rem 0;">
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(1)" style="cursor: pointer; color: #ddd;">⭐</span>
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(2)" style="cursor: pointer; color: #ddd;">⭐</span>
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(3)" style="cursor: pointer; color: #ddd;">⭐</span>
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(4)" style="cursor: pointer; color: #ddd;">⭐</span>
+                    <span class="rating-star" onclick="window.CoachMePlay.setRating(5)" style="cursor: pointer; color: #ddd;">⭐</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Your Review</label>
+                <textarea id="reviewText" class="form-control" rows="4" placeholder="Share your experience..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="submitReview()">Submit Review</button>
+        </div>
+    </div>
+
+    <!-- Coach Reviews -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">🏋️ Coach Reviews</h3>
+        <div class="cards-grid">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4>Sarah Johnson</h4>
+                    <div>⭐⭐⭐⭐⭐ <span style="color: var(--text-light);">(4.8/5)</span></div>
+                </div>
+                <p style="font-style: italic; margin-bottom: 1rem;">"Sarah is an incredible trainer! She helped me lose 10kg in 3 months with a perfect balance of strength training and cardio. Her nutrition advice was spot on."</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <small style="color: var(--text-light);">By John Doe - August 28, 2025</small>
+                    <div>
+                        <span style="margin-right: 1rem; cursor: pointer;" onclick="window.CoachMePlay.showNotification('Liked Sarah Johnson\'s review.', 'info')">👍 24</span>
+                        <span style="cursor: pointer;" onclick="window.CoachMePlay.showNotification('Reply feature would open here.', 'info')">💬 Reply</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4>Mike Chen</h4>
+                    <div>⭐⭐⭐⭐⭐ <span style="color: var(--text-light);">(4.9/5)</span></div>
+                </div>
+                <p style="font-style: italic; margin-bottom: 1rem;">"Best tennis coach in the city! Mike's technique guidance and match strategy coaching improved my game dramatically. Highly recommended for serious players."</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <small style="color: var(--text-light);">By Jane Smith - August 25, 2025</small>
+                    <div>
+                        <span style="margin-right: 1rem; cursor: pointer;" onclick="window.CoachMePlay.showNotification('Liked Mike Chen\'s review.', 'info')">👍 18</span>
+                        <span style="cursor: pointer;" onclick="window.CoachMePlay.showNotification('Reply feature would open here.', 'info')">💬 Reply</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4>Anita Patel</h4>
+                    <div>⭐⭐⭐⭐⭐ <span style="color: var(--text-light);">(4.7/5)</span></div>
+                </div>
+                <p style="font-style: italic; margin-bottom: 1rem;">"Anita's yoga classes are transformative. Her focus on mindfulness and proper alignment has helped me both physically and mentally. Very peaceful sessions."</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <small style="color: var(--text-light);">By Priya Shah - August 22, 2025</small>
+                    <div>
+                        <span style="margin-right: 1rem; cursor: pointer;" onclick="window.CoachMePlay.showNotification('Liked Anita Patel\'s review.', 'info')">👍 31</span>
+                        <span style="cursor: pointer;" onclick="window.CoachMePlay.showNotification('Reply feature would open here.', 'info')">💬 Reply</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Venue Reviews -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">🏟️ Venue Reviews</h3>
+        <div class="cards-grid">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4>City Sports Complex</h4>
+                    <div>⭐⭐⭐⭐ <span style="color: var(--text-light);">(4.2/5)</span></div>
+                </div>
+                <p style="font-style: italic; margin-bottom: 1rem;">"Great facilities with well-maintained courts. The booking system is easy to use. Only downside is limited parking during peak hours."</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <small style="color: var(--text-light);">By Tennis Player - August 30, 2025</small>
+                    <div>
+                        <span style="margin-right: 1rem; cursor: pointer;" onclick="window.CoachMePlay.showNotification('Liked City Sports Complex review.', 'info')">👍 12</span>
+                        <span style="cursor: pointer;" onclick="window.CoachMePlay.showNotification('Reply feature would open here.', 'info')">💬 Reply</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4>Elite Fitness Center</h4>
+                    <div>⭐⭐⭐⭐⭐ <span style="color: var(--text-light);">(4.6/5)</span></div>
+                </div>
+                <p style="font-style: italic; margin-bottom: 1rem;">"Top-notch equipment and very clean facilities. The staff is helpful and the environment is motivating. Worth every penny!"</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <small style="color: var(--text-light);">By Fitness Enthusiast - August 27, 2025</small>
+                    <div>
+                        <span style="margin-right: 1rem; cursor: pointer;" onclick="window.CoachMePlay.showNotification('Liked Elite Fitness Center review.', 'info')">👍 28</span>
+                        <span style="cursor: pointer;" onclick="window.CoachMePlay.showNotification('Reply feature would open here.', 'info')">💬 Reply</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Feedback -->
+    <div class="card">
+        <h3>📱 CoachMePlay Platform Reviews</h3>
+        <div style="margin-top: 2rem;">
+            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong>Amazing all-in-one platform!</strong>
+                    <div>⭐⭐⭐⭐⭐</div>
+                </div>
+                <p>"CoachMePlay has everything I need - booking coaches, venues, tracking progress, and shopping for gear. The community features are a bonus!"</p>
+                <small style="color: var(--text-light);">By Alex Rodriguez - September 1, 2025</small>
+            </div>
+
+            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong>Great for beginners</strong>
+                    <div>⭐⭐⭐⭐</div>
+                </div>
+                <p>"The platform made it easy for me to find a good coach and start my fitness journey. The progress tracking keeps me motivated."</p>
+                <small style="color: var(--text-light);">By Beginner Athlete - August 29, 2025</small>
+            </div>
+
+            <div style="padding-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong>Could use mobile app</strong>
+                    <div>⭐⭐⭐⭐</div>
+                </div>
+                <p>"Love the features but would prefer a dedicated mobile app for easier access while at the gym."</p>
+                <small style="color: var(--text-light);">By Mobile User - August 26, 2025</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to handle review submission (using the one from main.js if available, or a local one)
+    function submitReview() {
+        // Check if the global CoachMePlay object and its function exist
+        if (window.CoachMePlay && typeof window.CoachMePlay.submitReview === 'function') {
+             // Use the global function if it exists
+             window.CoachMePlay.submitReview(); // You might need to pass specific parameters
+             return;
+        }
+
+        // Fallback local implementation
+        const type = document.getElementById('reviewType').value;
+        const target = document.getElementById('reviewTarget').value;
+        const text = document.getElementById('reviewText').value;
+        // window.CoachMePlay.currentRating is set by the setRating function in main.js
+
+        if (!type) {
+            window.CoachMePlay.showNotification('Please select a review type.', 'error');
+            return;
+        }
+        if (!target) {
+            window.CoachMePlay.showNotification('Please enter a coach or venue name.', 'error');
+            return;
+        }
+        if (window.CoachMePlay.currentRating === 0) { // Assuming main.js sets this global var
+             window.CoachMePlay.showNotification('Please select a rating.', 'error');
+             return;
+        }
+        if (!text || text.length < 10) {
+            window.CoachMePlay.showNotification('Please write a detailed review (at least 10 characters).', 'error');
+            return;
+        }
+
+        window.CoachMePlay.showNotification('Review submitted successfully! Thank you.', 'success');
+        // Reset form
+        document.getElementById('reviewType').value = '';
+        document.getElementById('reviewTarget').value = '';
+        document.getElementById('reviewText').value = '';
+        // Reset stars (call the global function if available)
+        if (window.CoachMePlay && typeof window.CoachMePlay.setRating === 'function') {
+            window.CoachMePlay.setRating(0);
+        } else {
+            // Fallback reset
+            const stars = document.querySelectorAll('#ratingStars .rating-star');
+             stars.forEach(star => star.style.color = '#ddd');
+        }
+        // Reset global rating variable if it exists
+        if (window.CoachMePlay) window.CoachMePlay.currentRating = 0;
+    }
+</script>
+{% endblock %}

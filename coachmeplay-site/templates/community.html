@@ -1,0 +1,104 @@
+<!-- templates/community.html -->
+{% extends "base.html" %}
+
+{% block title %}Community - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-title">CoachMePlay Community</h2>
+
+    <!-- Challenge Section -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">🏆 Active Challenges</h3>
+        <div class="cards-grid">
+            <div class="card challenge-card" style="background: linear-gradient(135deg, var(--secondary), #66BB6A);">
+                <h4 style="color: white;">September Fitness Challenge</h4>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Goal:</strong> 10,000 steps daily for 30 days</p>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Participants:</strong> 1,247 athletes</p>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Your Progress:</strong> 8 days completed</p>
+                <div style="background: rgba(255,255,255,0.3); height: 10px; border-radius: 5px; margin: 1rem 0;">
+                    <div style="background: white; height: 100%; width: 27%; border-radius: 5px;"></div>
+                </div>
+                <button class="btn btn-secondary" style="background: white; color: var(--secondary);" onclick="window.CoachMePlay.showNotification('Joining September Fitness Challenge...', 'info')">Join Challenge</button>
+            </div>
+
+            <div class="card challenge-card" style="background: linear-gradient(135deg, var(--primary-light), #42A5F5);">
+                <h4 style="color: white;">Strength Training Week</h4>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Goal:</strong> Complete 5 strength workouts</p>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Participants:</strong> 856 athletes</p>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Ends in:</strong> 4 days</p>
+                <button class="btn btn-secondary" style="background: white; color: var(--primary-light);" onclick="window.CoachMePlay.showNotification('Joining Strength Training Week...', 'info')">Join Challenge</button>
+            </div>
+
+            <div class="card challenge-card" style="background: linear-gradient(135deg, #FF9800, #FFB74D);">
+                <h4 style="color: white;">Yoga Mindfulness Month</h4>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Goal:</strong> 20 minutes daily meditation</p>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Participants:</strong> 423 athletes</p>
+                <p style="color: rgba(255, 255, 255, 0.9);"><strong>Starts:</strong> September 10</p>
+                <button class="btn btn-secondary" style="background: white; color: #FF9800;" onclick="window.CoachMePlay.showNotification('Joining Yoga Mindfulness Month...', 'info')">Join Challenge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Local Groups Section -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">🏃 Local Sports Groups</h3>
+        <div class="cards-grid">
+            <div class="card">
+                <h4>Mumbai Running Club</h4>
+                <p><strong>Activity:</strong> Group Running</p>
+                <p><strong>Schedule:</strong> Every Sunday, 6:00 AM</p>
+                <p><strong>Location:</strong> Marine Drive, Mumbai</p>
+                <p><strong>Members:</strong> 234 active runners</p>
+                <p><strong>Next Run:</strong> September 8, 2025</p>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Details for Mumbai Running Club would be shown here.', 'info')">Join Group</button>
+            </div>
+
+            <div class="card">
+                <h4>Delhi Tennis Circle</h4>
+                <p><strong>Activity:</strong> Social Tennis</p>
+                <p><strong>Schedule:</strong> Wednesdays & Fridays, 7:00 PM</p>
+                <p><strong>Location:</strong> Delhi Sports Complex</p>
+                <p><strong>Members:</strong> 156 players</p>
+                <p><strong>Next Session:</strong> September 6, 2025</p>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Details for Delhi Tennis Circle would be shown here.', 'info')">Join Group</button>
+            </div>
+
+            <div class="card">
+                <h4>Bangalore Yoga Collective</h4>
+                <p><strong>Activity:</strong> Hatha & Vinyasa Yoga</p>
+                <p><strong>Schedule:</strong> Tuesdays & Thursdays, 6:30 AM</p>
+                <p><strong>Location:</strong> Cubbon Park Lawns</p>
+                <p><strong>Members:</strong> 98 practitioners</p>
+                <p><strong>Next Class:</strong> September 5, 2025</p>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Details for Bangalore Yoga Collective would be shown here.', 'info')">Join Group</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Discussion Forum Preview -->
+    <div class="card">
+        <h3 style="margin-bottom: 1rem;">🗣️ Recent Community Discussions</h3>
+        <div class="discussion-list">
+            <div class="discussion-item">
+                <h4><a href="#" onclick="window.CoachMePlay.showNotification('Opening discussion: Best protein supplements for vegans?', 'info')">Best protein supplements for vegans?</a></h4>
+                <p>Started by VeganAthlete21 in Nutrition • 42 replies</p>
+                <small>Latest reply 2 hours ago by FitFoodie</small>
+            </div>
+            <div class="discussion-item">
+                <h4><a href="#" onclick="window.CoachMePlay.showNotification('Opening discussion: Marathon training tips for beginners', 'info')">Marathon training tips for beginners</a></h4>
+                <p>Started by FirstMarathoner in Running • 128 replies</p>
+                <small>Latest reply 5 hours ago by MarathonCoach</small>
+            </div>
+            <div class="discussion-item">
+                <h4><a href="#" onclick="window.CoachMePlay.showNotification('Opening discussion: Home workout routines without equipment', 'info')">Home workout routines without equipment</a></h4>
+                <p>Started by HomeGymHero in Fitness • 67 replies</p>
+                <small>Latest reply 1 day ago by NoEquipmentNancy</small>
+            </div>
+        </div>
+        <div style="margin-top: 1rem; text-align: center;">
+            <a href="#" class="btn btn-outline" onclick="window.CoachMePlay.showNotification('Navigating to full community forum...', 'info')">View All Discussions</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

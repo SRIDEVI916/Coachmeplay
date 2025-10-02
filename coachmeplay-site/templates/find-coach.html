@@ -1,0 +1,105 @@
+<!-- templates/find_coach.html -->
+{% extends "base.html" %}
+
+{% block title %}Find Coaches - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-title">Find Your Perfect Coach</h2>
+
+    <div class="form-container" style="max-width: 800px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div class="form-group">
+                <label for="sportFilter">Sport/Activity</label>
+                <select class="form-control" id="sportFilter">
+                    <option value="">All Sports</option>
+                    <option value="fitness">Fitness Training</option>
+                    <option value="tennis">Tennis</option>
+                    <option value="swimming">Swimming</option>
+                    <option value="basketball">Basketball</option>
+                    <option value="yoga">Yoga</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="experienceFilter">Experience Level</label>
+                <select class="form-control" id="experienceFilter">
+                    <option value="">Any Experience</option>
+                    <option value="1-3">1-3 years</option>
+                    <option value="3-5">3-5 years</option>
+                    <option value="5+">5+ years</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="priceFilter">Price Range</label>
+                <select class="form-control" id="priceFilter">
+                    <option value="">Any Price</option>
+                    <option value="500-1000">₹500-1000/hour</option>
+                    <option value="1000-2000">₹1000-2000/hour</option>
+                    <option value="2000+">₹2000+/hour</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="searchCoaches()">Search Coaches</button>
+    </div>
+
+    <div class="cards-grid" style="margin-top: 3rem;">
+        <div class="card">
+            <div style="text-align: center;">
+                <div class="coach-avatar">SJ</div>
+                <h3>Sarah Johnson</h3>
+                <p><strong>Specialization:</strong> Strength Training & Fitness</p>
+                <p><strong>Experience:</strong> 8 years</p>
+                <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐ (4.8/5)</p>
+                <p><strong>Price:</strong> ₹1,500/hour</p>
+                <p><strong>Location:</strong> Mumbai, Maharashtra</p>
+                <div style="margin-top: 1rem;">
+                    <button class="btn btn-primary" onclick="window.CoachMePlay.bookCoach('Sarah Johnson')">Book Session</button>
+                    <button class="btn btn-secondary" onclick="window.CoachMePlay.showNotification('Viewing Sarah Johnson\'s profile...', 'info')">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="text-align: center;">
+                <div class="coach-avatar">MC</div>
+                <h3>Mike Chen</h3>
+                <p><strong>Specialization:</strong> Tennis Coaching</p>
+                <p><strong>Experience:</strong> 12 years</p>
+                <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐ (4.9/5)</p>
+                <p><strong>Price:</strong> ₹2,000/hour</p>
+                <p><strong>Location:</strong> Delhi, NCR</p>
+                <div style="margin-top: 1rem;">
+                    <button class="btn btn-primary" onclick="window.CoachMePlay.bookCoach('Mike Chen')">Book Session</button>
+                    <button class="btn btn-secondary" onclick="window.CoachMePlay.showNotification('Viewing Mike Chen\'s profile...', 'info')">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="text-align: center;">
+                <div class="coach-avatar">AP</div>
+                <h3>Anita Patel</h3>
+                <p><strong>Specialization:</strong> Yoga & Wellness</p>
+                <p><strong>Experience:</strong> 6 years</p>
+                <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐ (4.7/5)</p>
+                <p><strong>Price:</strong> ₹800/hour</p>
+                <p><strong>Location:</strong> Pune, Maharashtra</p>
+                <div style="margin-top: 1rem;">
+                    <button class="btn btn-primary" onclick="window.CoachMePlay.bookCoach('Anita Patel')">Book Session</button>
+                    <button class="btn btn-secondary" onclick="window.CoachMePlay.showNotification('Viewing Anita Patel\'s profile...', 'info')">View Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function searchCoaches() {
+        const sport = document.getElementById('sportFilter').value;
+        const exp = document.getElementById('experienceFilter').value;
+        const price = document.getElementById('priceFilter').value;
+        window.CoachMePlay.showNotification(`Searching coaches: Sport=${sport}, Exp=${exp}, Price=${price}`, 'info');
+        // In a real app, this would filter the coach list
+    }
+</script>
+{% endblock %}

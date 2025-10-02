@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Venues - CoachMePlay</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    .details { display: none; margin-top: 1rem; }
+
+    .calendar { 
+      display: grid; 
+      grid-template-columns: 1fr; 
+      gap: 10px; 
+      margin-top: 1rem; 
+    }
+    .day-container {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: center;
+      background: #fafafa;
+      border-radius: 10px;
+    }
+    .day-title {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .slots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: center;
+    }
+    .slot {
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+    }
+    .available { background: #c8e6c9; cursor: not-allowed; } /* green */
+    .booked { background: #ffcdd2 !important; cursor: pointer; } /* red but clickable */
+    .unavailable { background: #f5f5f5; color: #888; cursor: not-allowed; } /* gray */
+
+    /* Custom Slot Form */
+    .custom-slot-container {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #f9f9f9;
+      text-align: center;
+    }
+    .custom-slot-container select {
+      padding: 5px;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">CoachMePlay</div>
+      <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="find-coach.html">Coaches</a></li>
+        <li><a href="market.html">Marketplace</a></li>
+        <li><a href="athlete-dashboard.html">Dashboard</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div style="padding-top: 100px; min-height: 100vh;">
+    <div class="container">
+      <h2 class="section-title">Book Sports Venues</h2>
+
+      <!-- Search Form -->
+      <div class="form-container" style="max-width: 800px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Location</label>
+            <select id="location" class="form-control">
+              <option value="">Select City</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Bangalore">Bangalore</option>
+              <option value="Pune">Pune</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Sport/Activity</label>
+            <select id="facility" class="form-control">
+              <option value="">All Facilities</option>
+              <option value="Tennis">Tennis</option>
+              <option value="Basketball">Basketball</option>
+              <option value="Swimming">Swimming</option>
+              <option value="Badminton">Badminton</option>
+              <option value="Gym">Gym</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="date" class="form-control" onchange="updateCalendarWithDate()">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="searchVenues()">Search Venues</button>
+      </div>
+
+      <!-- Venue Cards -->
+      <div id="venue-list" class="cards-grid" style="margin-top: 3rem;"></div>
+
+      <!-- Calendar Section -->
+      <div style="background: white; border-radius: 15px; padding: 2rem; margin-top: 3rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        <h3 style="text-align: center; margin-bottom: 2rem;">Slot Availability</h3>
+        <div id="calendar" class="calendar"></div>
+        <div style="margin-top: 1rem; display: flex; gap: 2rem; justify-content: center;">
+          <span><span style="display: inline-block; width: 20px; height: 20px; background: #c8e6c9; margin-right: 5px;"></span>Available</span>
+          <span><span style="display: inline-block; width: 20px; height: 20px; background: #ffcdd2; margin-right: 5px;"></span>Booked</span>
+          <span><span style="display: inline-block; width: 20px; height: 20px; background: #f5f5f5; border: 1px solid #ddd; margin-right: 5px;"></span>Unavailable</span>
+        </div>
+
+        <!-- Custom Slot Booking -->
+        <div class="custom-slot-container">
+          <h4>Book Custom Slot</h4>
+          <label>From:</label>
+          <select id="customStart"></select>
+          <label>To:</label>
+          <select id="customEnd"></select>
+          <button class="btn btn-success" onclick="bookCustomSlot()">Book Custom Slot</button>
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <button class="btn btn-danger" onclick="resetBookings()">Reset All Bookings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let bookedSlots = JSON.parse(localStorage.getItem("bookedSlots")) || {}; 
+    let selectedDate = null;
+    let currentVenue = null;
+
+    const venues = [
+      { name: "City Sports Complex", location: "Mumbai", area: "Andheri", facilities: ["Tennis", "Basketball", "Swimming"], price: "₹500-800/hour", available: "Today 6AM - 10PM", rating: "⭐⭐⭐⭐ (4.2/5)" }
+    ];
+
+    const unavailableDates = {
+      "2025-01-26": "Republic Day",
+      "2025-08-15": "Independence Day",
+      "2025-10-02": "Gandhi Jayanti",
+      "2025-09-10": "Maintenance",
+      "2025-09-11": "Anand Chaturthi",
+      "2025-10-01": "Dasara",
+      "2025-10-20": "Diwali",
+      "2025-12-25": "Christmas"
+    };
+
+    const timeSlots = ["06AM-07AM","07AM-08AM","08AM-09AM","09AM-10AM","10AM-11AM","11AM-12PM","12PM-01PM","01PM-02PM","02PM-03PM","03PM-04PM","04PM-05PM","05PM-06PM","06PM-07PM","07PM-08PM","08PM-09PM","09PM-10PM"];
+
+    // ✅ Set min date = today to block past dates
+    window.onload = function() {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("date").setAttribute("min", today);
+
+      const startSel = document.getElementById("customStart");
+      const endSel = document.getElementById("customEnd");
+      timeSlots.forEach((slot, i) => {
+        let opt1 = document.createElement("option");
+        opt1.value = i;
+        opt1.textContent = slot;
+        startSel.appendChild(opt1);
+
+        let opt2 = document.createElement("option");
+        opt2.value = i;
+        opt2.textContent = slot;
+        endSel.appendChild(opt2);
+      });
+    };
+
+    function renderCalendar(venueName) {
+      currentVenue = venueName;
+      const calendar = document.getElementById("calendar");
+      calendar.innerHTML = "";
+      if (!selectedDate) return;
+
+      const dateStr = selectedDate;
+      const dayContainer = document.createElement("div");
+      dayContainer.classList.add("day-container");
+
+      const dayTitle = document.createElement("div");
+      dayTitle.classList.add("day-title");
+      dayTitle.textContent = dateStr;
+      dayContainer.appendChild(dayTitle);
+
+      const slotsContainer = document.createElement("div");
+      slotsContainer.classList.add("slots");
+
+      timeSlots.forEach(slot => {
+        const slotDiv = document.createElement("div");
+        slotDiv.textContent = slot;
+        slotDiv.id = `${venueName}-${dateStr}-${slot}`;
+        slotDiv.classList.add("slot", "available");
+
+        if (unavailableDates[dateStr]) {
+          slotDiv.classList.remove("available");
+          slotDiv.classList.add("unavailable");
+          slotDiv.title = `Unavailable due to ${unavailableDates[dateStr]}`;
+        }
+        if (bookedSlots[venueName]?.[dateStr]?.includes(slot)) {
+          slotDiv.classList.remove("available");
+          slotDiv.classList.add("booked");
+          slotDiv.title = "Click to cancel booking (penalty applies)";
+          slotDiv.onclick = () => cancelBooking(venueName, dateStr, slot); // ✅ cancel support
+        }
+
+        slotsContainer.appendChild(slotDiv);
+      });
+
+      dayContainer.appendChild(slotsContainer);
+      calendar.appendChild(dayContainer);
+    }
+
+    // ✅ Book Custom Slot
+    function bookCustomSlot() {
+      if (!currentVenue || !selectedDate) {
+        alert("⚠️ Please select a venue and date first!");
+        return;
+      }
+
+      const startIdx = parseInt(document.getElementById("customStart").value);
+      const endIdx = parseInt(document.getElementById("customEnd").value);
+
+      if (startIdx > endIdx) {
+        alert("⚠️ End time must be after or equal to start time!");
+        return;
+      }
+
+      const selectedSlots = timeSlots.slice(startIdx, endIdx + 1);
+      for (let slot of selectedSlots) {
+        const slotDiv = document.getElementById(`${currentVenue}-${selectedDate}-${slot}`);
+        if (!slotDiv || !slotDiv.classList.contains("available")) {
+          alert("❌ Cannot book this custom slot. One or more slots are already booked/unavailable!");
+          return;
+        }
+      }
+
+      const confirmPayment = confirm(`💳 Confirm booking for ${currentVenue} on ${selectedDate} (${selectedSlots.join(", ")})?`);
+      if (confirmPayment) {
+        if (!bookedSlots[currentVenue]) bookedSlots[currentVenue] = {};
+        if (!bookedSlots[currentVenue][selectedDate]) bookedSlots[currentVenue][selectedDate] = [];
+        bookedSlots[currentVenue][selectedDate].push(...selectedSlots);
+
+        localStorage.setItem("bookedSlots", JSON.stringify(bookedSlots));
+        alert(`✅ Custom slot booked: ${currentVenue}, ${selectedDate} (${selectedSlots.join(", ")})`);
+        renderCalendar(currentVenue);
+      }
+    }
+
+    // ✅ Cancel Booking with Penalty
+    function cancelBooking(venueName, date, slot) {
+      const confirmCancel = confirm(`⚠️ Cancel booking for ${venueName} on ${date} (${slot})?\n\nPenalty fee will be applied.`);
+      if (!confirmCancel) return;
+
+      // remove from booked slots
+      bookedSlots[venueName][date] = bookedSlots[venueName][date].filter(s => s !== slot);
+      if (bookedSlots[venueName][date].length === 0) delete bookedSlots[venueName][date];
+      if (Object.keys(bookedSlots[venueName]).length === 0) delete bookedSlots[venueName];
+
+      localStorage.setItem("bookedSlots", JSON.stringify(bookedSlots));
+
+      alert("💳 Penalty fee paid. Booking cancelled successfully.");
+      renderCalendar(venueName);
+    }
+
+    function searchVenues() {
+      const location = document.getElementById("location").value;
+      const facility = document.getElementById("facility").value;
+      selectedDate = document.getElementById("date").value;
+
+      const venueList = document.getElementById("venue-list");
+      venueList.innerHTML = "";
+      if (!selectedDate) {
+        alert("⚠️ Please select a date first!");
+        return;
+      }
+
+      const filtered = venues.filter(v =>
+        (location === "" || v.location === location) &&
+        (facility === "" || v.facilities.includes(facility))
+      );
+
+      filtered.forEach(v => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+
+        card.innerHTML = `
+          <h3>${v.name}</h3>
+          <div class="details">
+            <p><strong>Location:</strong> ${v.area}, ${v.location}</p>
+            <p><strong>Facilities:</strong> ${v.facilities.join(", ")}</p>
+            <p><strong>Price:</strong> ${v.price}</p>
+            <p><strong>Available:</strong> ${v.available}</p>
+            <p><strong>Rating:</strong> ${v.rating}</p>
+          </div>
+          <div style="margin-top: 1rem;">
+            <button class="btn btn-primary" onclick="renderCalendar('${v.name}')">Show Slots</button>
+            <button class="btn btn-secondary" onclick="toggleDetails(this)">View Details</button>
+          </div>
+        `;
+        venueList.appendChild(card);
+      });
+    }
+
+    function toggleDetails(button) {
+      const details = button.parentElement.previousElementSibling;
+      if (details.style.display === "none" || details.style.display === "") {
+        details.style.display = "block";
+        button.textContent = "Hide Details";
+      } else {
+        details.style.display = "none";
+        button.textContent = "View Details";
+      }
+    }
+
+    function resetBookings() {
+      localStorage.removeItem("bookedSlots");
+      bookedSlots = {};
+      if (currentVenue) renderCalendar(currentVenue); 
+      alert("✅ All bookings have been reset!");
+    }
+
+    function updateCalendarWithDate() {
+      selectedDate = document.getElementById("date").value;
+      if (currentVenue) renderCalendar(currentVenue);
+    }
+  </script>
+</body>
+</html>

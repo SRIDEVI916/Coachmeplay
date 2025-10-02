@@ -1,0 +1,33 @@
+<!-- templates/login.html -->
+{% extends "base.html" %}
+
+{% block title %}Login - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2>Login to Your Account</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+        </form>
+        <p style="margin-top: 1rem; text-align: center;">
+            <a href="#">Forgot Password?</a> | Don't have an account? <a href="{{ url_for('register') }}">Register</a>
+        </p>
+        <hr style="margin: 1.5rem 0;">
+        <p style="text-align: center; font-size: 0.9rem; color: var(--text-light);"><strong>Demo Logins:</strong></p>
+        <ul style="font-size: 0.85rem; color: var(--text-light);">
+            <li><strong>Athlete:</strong> athlete@example.com / password123</li>
+            <li><strong>Coach:</strong> coach@example.com / password123</li>
+            <li><strong>Venue:</strong> venue@example.com / password123</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

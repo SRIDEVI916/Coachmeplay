@@ -1,0 +1,213 @@
+<!-- templates/coach/coach_dashboard.html -->
+{% extends "base.html" %}
+
+{% block title %}Coach Dashboard - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="container">
+        <h1>Welcome, {{ user_name }}! <img src="{{ url_for('static', filename='images/coach-icon.png') }}" alt="Coach" style="height: 1.5rem; vertical-align: middle;"></h1>
+        <p>Manage your athletes and help them reach their peak performance.</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Dashboard Navigation -->
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <button class="btn btn-outline" onclick="showCoachSection('overview')">Overview</button>
+        <button class="btn btn-outline" onclick="showCoachSection('athletes')">Manage Athletes</button>
+        <button class="btn btn-outline" onclick="showCoachSection('sessions')">Schedule Sessions</button>
+        <button class="btn btn-outline" onclick="showCoachSection('analytics')">Analytics</button>
+        <button class="btn btn-outline" onclick="showCoachSection('community')">Community</button>
+    </div>
+
+    <!-- Dashboard Sections -->
+    <div id="coach-overview" class="dashboard-section active">
+        <h2 class="section-title">Coach Dashboard</h2>
+        <div class="cards-grid">
+            <div class="card dashboard-card">
+                <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Manage Athletes" style="height: 3rem; margin-bottom: 1rem; border-radius: 4px;">
+                <h3>Manage Athletes</h3>
+                <p>Track and assign training plans to your athletes.</p>
+                <button class="btn btn-primary" onclick="showCoachSection('athletes')">Manage</button>
+            </div>
+            <div class="card dashboard-card">
+                <img src="https://images.unsplash.com/photo-1506784365847-bbad939e9335?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Schedule" style="height: 3rem; margin-bottom: 1rem; border-radius: 4px;">
+                <h3>Schedule</h3>
+                <p>Plan and manage your upcoming sessions.</p>
+                <button class="btn btn-primary" onclick="showCoachSection('sessions')">View Schedule</button>
+            </div>
+            <div class="card dashboard-card">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Analytics" style="height: 3rem; margin-bottom: 1rem; border-radius: 4px;">
+                <h3>Analytics</h3>
+                <p>Review athlete performance and your coaching impact.</p>
+                <button class="btn btn-primary" onclick="showCoachSection('analytics')">View Reports</button>
+            </div>
+            <div class="card dashboard-card">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Feedback" style="height: 3rem; margin-bottom: 1rem; border-radius: 4px;">
+                <h3>Feedback</h3>
+                <p>Provide performance feedback and tips.</p>
+                <button class="btn btn-primary">Give Feedback</button>
+            </div>
+            <div class="card dashboard-card">
+                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Community" style="height: 3rem; margin-bottom: 1rem; border-radius: 4px;">
+                <h3>Community</h3>
+                <p>Engage with athletes and other coaches.</p>
+                <button class="btn btn-primary" onclick="showCoachSection('community')">Join Now</button>
+            </div>
+            <div class="card dashboard-card">
+                <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Earnings" style="height: 3rem; margin-bottom: 1rem; border-radius: 4px;">
+                <h3>Earnings</h3>
+                <p>Track your session bookings and payments.</p>
+                <button class="btn btn-primary">View Earnings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rest of the code remains unchanged -->
+    <div id="athletes" class="dashboard-section">
+        <h2 class="section-title">My Athletes</h2>
+        <div class="cards-grid">
+            <div class="card">
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <img src="{{ url_for('static', filename='images/alex-runner.jpg') }}" alt="Alex Runner" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 1rem;">
+                    <h3>Alex Runner</h3>
+                </div>
+                <p><strong>Sport:</strong> Marathon Running</p>
+                <p><strong>Goals:</strong> Sub-3:30 Marathon</p>
+                <p><strong>Last Session:</strong> 2 days ago</p>
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary">View Plan</button>
+                    <button class="btn btn-outline">Message</button>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <img src="{{ url_for('static', filename='images/samira-khan.jpg') }}" alt="Samira Khan" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 1rem;">
+                    <h3>Samira Khan</h3>
+                </div>
+                <p><strong>Sport:</strong> Tennis</p>
+                <p><strong>Goals:</strong> Improve Serve Accuracy</p>
+                <p><strong>Last Session:</strong> 1 week ago</p>
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary">View Plan</button>
+                    <button class="btn btn-outline">Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sessions" class="dashboard-section">
+        <h2 class="section-title">Upcoming Sessions</h2>
+        <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <img src="{{ url_for('static', filename='images/running-session.jpg') }}" alt="Running Session" style="width: 80px; height: 80px; border-radius: 8px; margin-right: 1rem;">
+                <div>
+                    <h3>Training Session with Alex Runner</h3>
+                    <p><strong>Date & Time:</strong> Thu, Oct 26, 2023, 6:00 AM</p>
+                    <p><strong>Location:</strong> City Sports Complex (Booked)</p>
+                    <p><strong>Type:</strong> Long Run + Tempo</p>
+                </div>
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-secondary">Edit Session</button>
+                <button class="btn btn-outline">Cancel</button>
+            </div>
+        </div>
+        <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <img src="{{ url_for('static', filename='images/tennis-session.jpg') }}" alt="Tennis Session" style="width: 80px; height: 80px; border-radius: 8px; margin-right: 1rem;">
+                <div>
+                    <h3>Technique Session with Samira Khan</h3>
+                    <p><strong>Date & Time:</strong> Fri, Oct 27, 2023, 5:00 PM</p>
+                    <p><strong>Location:</strong> Elite Tennis Academy</p>
+                    <p><strong>Type:</strong> Serve Practice</p>
+                </div>
+            </div>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-secondary">Edit Session</button>
+                <button class="btn btn-outline">Cancel</button>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top: 1rem;">Schedule New Session</button>
+    </div>
+
+    <div id="analytics" class="dashboard-section">
+        <h2 class="section-title">Performance Analytics</h2>
+        <div class="card">
+            <h3>Your Athletes' Progress (Last 30 Days)</h3>
+            <div class="progress-chart">
+                 <div class="progress-bar" style="width: 65%;"></div> <!-- Simulate chart -->
+            </div>
+            <p style="margin-top: 1rem;">Average improvement: 12% across key metrics.</p>
+        </div>
+        <div class="cards-grid">
+            <div class="card">
+                <div style="display: flex; align-items: center;">
+                    <img src="{{ url_for('static', filename='images/top-performer.jpg') }}" alt="Top Performer" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 1rem;">
+                    <div>
+                        <h3>Top Performer</h3>
+                        <p><strong>Alex Runner</strong></p>
+                        <p>Improved 5K time by 45 seconds.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display: flex; align-items: center;">
+                    <img src="{{ url_for('static', filename='images/new-signups.jpg') }}" alt="New Sign-ups" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 1rem;">
+                    <div>
+                        <h3>New Sign-ups</h3>
+                        <p style="font-size: 2rem; font-weight: bold; color: var(--primary);">3</p>
+                        <p>This month</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="coach-community" class="dashboard-section">
+        <h2 class="section-title">Coach Community</h2>
+        <div class="card">
+            <div style="display: flex; align-items: center;">
+                <img src="{{ url_for('static', filename='images/nutrition-discussion.jpg') }}" alt="Nutrition Discussion" style="width: 80px; height: 80px; border-radius: 8px; margin-right: 1rem;">
+                <div>
+                    <h3>Discussion: Nutrition for Endurance Athletes</h3>
+                    <p>Started by CoachMike. 15 replies.</p>
+                    <button class="btn btn-outline">Join Discussion</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div style="display: flex; align-items: center;">
+                <img src="{{ url_for('static', filename='images/training-webinar.jpg') }}" alt="Training Webinar" style="width: 80px; height: 80px; border-radius: 8px; margin-right: 1rem;">
+                <div>
+                    <h3>Webinar: Advanced Training Load Management</h3>
+                    <p>Date: Nov 5, 2023. Register now!</p>
+                    <button class="btn btn-secondary">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function showCoachSection(sectionId) {
+        document.querySelectorAll('.dashboard-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            // Fallback for sections with different IDs
+            const fallbackSection = document.getElementById('coach-' + sectionId);
+            if(fallbackSection) {
+                 fallbackSection.classList.add('active');
+                 fallbackSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    }
+</script>
+{% endblock %}

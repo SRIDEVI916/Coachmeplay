@@ -1,0 +1,116 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CoachMePlay - Personalized Sports Coaching{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="logo">
+                <span class="logo-icon">🏃‍♂️</span> CoachMePlay
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                
+                {% if session.user_id %}
+                    {% if session.role == 'athlete' %}
+                        <li><a href="{{ url_for('athlete_dashboard') }}">My Dashboard</a></li>
+                    {% elif session.role == 'coach' %}
+                        <li><a href="{{ url_for('coach_dashboard') }}">Coach Hub</a></li>
+                    {% elif session.role == 'venue' %}
+                        <li><a href="{{ url_for('venue_dashboard') }}">Venue Hub</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('market') }}">Marketplace</a></li>
+                    <li><a href="{{ url_for('community') }}">Community</a></li>
+
+                    <!-- ✅ Cart with live badge -->
+                    <li>
+                        <a href="{{ url_for('cart') }}" id="navbar-cart-link">
+                            🛒 Cart (<span id="cart-count">0</span>)
+                        </a>
+                    </li>
+
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ===== CONTENT ===== -->
+    <main>
+        <div class="container" id="flash-messages-container" style="margin-top: 1rem;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="notification {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 CoachMePlay. All rights reserved.</p>
+            <p>Built by Group TE_A_11</p>
+            <p>Khushi Anchalia, Shreeys Gondhalekar, Sridevi Karampuri</p>
+            <p>Guided by: Prof. Sonal Balgunde</p>
+        </div>
+    </footer>
+
+    <!-- ===== CART SCRIPT ===== -->
+    <script>
+    window.CoachMePlay = window.CoachMePlay || (function () {
+        const KEY = "cartItems";
+        const read = () => JSON.parse(localStorage.getItem(KEY) || "[]");
+        const write = (items) => localStorage.setItem(KEY, JSON.stringify(items));
+
+        return {
+            getCart: read,
+            setCart: write,
+            addToCart: (name, price, qty=1) => {
+                let cart = read();
+                const idx = cart.findIndex(i => i.name === name);
+                if (idx > -1) cart[idx].quantity += qty;
+                else cart.push({ name, price: Number(price), quantity: qty });
+                write(cart);
+                updateCartBadge();
+            },
+            removeByName: (name) => {
+                let cart = read().filter(i => i.name !== name);
+                write(cart);
+                updateCartBadge();
+            },
+            clearCart: () => {
+                write([]);
+                updateCartBadge();
+            }
+        };
+    })();
+
+    // ✅ Update cart badge in navbar
+    function updateCartBadge() {
+        const countElem = document.getElementById("cart-count");
+        if (countElem) {
+            const cart = CoachMePlay.getCart();
+            const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+            countElem.textContent = total;
+        }
+    }
+
+    // Run on page load
+    document.addEventListener("DOMContentLoaded", updateCartBadge);
+    </script>
+</body>
+</html>

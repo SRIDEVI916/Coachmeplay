@@ -1,0 +1,220 @@
+<!-- templates/athlete/athlete_dashboard.html -->
+{% extends "base.html" %}
+
+{% block title %}Athlete Dashboard - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="container">
+        <h1>Welcome, {{ user_name }}! 👋</h1>
+        <p>Your training journey starts here. Track progress, find coaches, and book venues.</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Dashboard Navigation -->
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <button class="btn btn-outline" onclick="showSection('overview')">Overview</button>
+        <button class="btn btn-outline" onclick="showSection('training')">Training</button>
+        <button class="btn btn-outline" onclick="showSection('progress')">My Progress</button>
+        <button class="btn btn-outline" onclick="showSection('diet')">Diet Plans</button>
+        <button class="btn btn-outline" onclick="showSection('community')">Community</button>
+        <button class="btn btn-outline" onclick="showSection('bookings')">Bookings</button>
+        <button class="btn btn-outline" onclick="showSection('marketplace')">Marketplace</button>
+    </div>
+
+    <!-- Dashboard Sections -->
+    <div id="overview" class="dashboard-section active">
+        <h2 class="section-title">Your Dashboard</h2>
+        <div class="cards-grid">
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">🏋️</div>
+                <h3>Training</h3>
+                <p>View your assigned workout plans and coach feedback.</p>
+                <button class="btn btn-primary" onclick="showSection('training')">View Plans</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">📈</div>
+                <h3>Progress</h3>
+                <p>Track your performance and see your improvements.</p>
+                <button class="btn btn-primary" onclick="showSection('progress')">View Progress</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">🥗</div>
+                <h3>Diet</h3>
+                <p>Manage your nutrition and get personalized plans.</p>
+                <button class="btn btn-primary" onclick="showSection('diet')">View Diet</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">📍</div>
+                <h3>Bookings</h3>
+                <p>Find and book sports venues for your sessions.</p>
+                <button class="btn btn-primary" onclick="showSection('bookings')">Book Venue</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">🛒</div>
+                <h3>Marketplace</h3>
+                <p>Shop for the best sports gear and equipment.</p>
+                <button class="btn btn-primary" onclick="showSection('marketplace')">Shop Now</button>
+            </div>
+            <div class="card dashboard-card">
+                <div style="font-size: 3rem; color: var(--secondary);">👥</div>
+                <h3>Community</h3>
+                <p>Connect with fellow athletes and share experiences.</p>
+                <button class="btn btn-primary" onclick="showSection('community')">Join Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="training" class="dashboard-section">
+        <h2 class="section-title">My Training Plans</h2>
+        <div class="cards-grid">
+            <div class="card">
+                <h3>Strength & Conditioning</h3>
+                <p>Focus: Building muscle and power. 4 days/week.</p>
+                <p><strong>Coach:</strong> Coach Smith</p>
+                <p><strong>Status:</strong> <span style="color: var(--secondary);">Active</span></p>
+                <a href="#" class="btn btn-secondary">View Details</a>
+            </div>
+            <div class="card">
+                <h3>Marathon Prep</h3>
+                <p>Focus: Endurance running. 6 days/week.</p>
+                <p><strong>Coach:</strong> Elite Runners Inc.</p>
+                <p><strong>Status:</strong> Upcoming</p>
+                <a href="#" class="btn btn-secondary">View Details</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="progress" class="dashboard-section">
+        <h2 class="section-title">Progress Tracking</h2>
+        <div class="card">
+            <h3>Weekly Performance Summary</h3>
+            <div class="progress-chart">
+                <div class="progress-bar"></div> <!-- Simulate chart -->
+            </div>
+            <p style="margin-top: 1rem;"><strong>Last Week:</strong> Completed 85% of planned workouts. Personal best in 5K run!</p>
+        </div>
+        <div class="cards-grid">
+            <div class="card nutrition-goal">
+                <h4>Distance Run (km)</h4>
+                <p style="font-size: 2rem; font-weight: bold; color: var(--primary);">42.2</p>
+                <p>of 50 km this week</p>
+            </div>
+            <div class="card nutrition-goal">
+                <h4>Workout Sessions</h4>
+                <p style="font-size: 2rem; font-weight: bold; color: var(--primary);">5</p>
+                <p>of 6 planned</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="diet" class="dashboard-section">
+        <h2 class="section-title">Personalized Diet Plan</h2>
+        <div class="card">
+            <h3>Today's Nutrition Goals</h3>
+            <div class="cards-grid">
+                <div class="card nutrition-goal">
+                    <h4>Calories</h4>
+                    <p style="font-size: 1.5rem; font-weight: bold;">2200</p>
+                    <p>Goal</p>
+                </div>
+                <div class="card nutrition-goal">
+                    <h4>Protein</h4>
+                    <p style="font-size: 1.5rem; font-weight: bold;">120g</p>
+                    <p>Goal</p>
+                </div>
+                <div class="card nutrition-goal">
+                    <h4>Carbs</h4>
+                    <p style="font-size: 1.5rem; font-weight: bold;">300g</p>
+                    <p>Goal</p>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Recommended Meal: Post-Workout Protein Shake</h3>
+            <p><strong>Ingredients:</strong></p>
+            <ul>
+                <li>1 scoop Whey Protein</li>
+                <li>1 banana</li>
+                <li>200ml Milk</li>
+                <li>Handful of Berries</li>
+            </ul>
+            <p><strong>Benefits:</strong> Aids muscle recovery and replenishes glycogen stores.</p>
+        </div>
+    </div>
+
+    <div id="community" class="dashboard-section">
+        <h2 class="section-title">CoachMePlay Community</h2>
+        <div class="card challenge-card">
+            <h3>🏆 Active Challenge: 30-Day Plank Challenge</h3>
+            <p>Join hundreds of athletes improving their core strength!</p>
+            <button class="btn" style="background-color: white; color: var(--secondary); font-weight: bold;">Join Challenge</button>
+        </div>
+        <div class="cards-grid">
+            <div class="card">
+                <h4>Recent Forum Post</h4>
+                <p><strong>Topic:</strong> Best running shoes for flat feet?</p>
+                <p><strong>By:</strong> RunnerJane</p>
+                <a href="#" class="btn btn-outline">View Discussion</a>
+            </div>
+            <div class="card">
+                <h4>Coach Q&A</h4>
+                <p><strong>Question:</strong> How to improve my serve in tennis?</p>
+                <p><strong>Answered by:</strong> ProCoachMike</p>
+                <a href="#" class="btn btn-outline">Read Answer</a>
+            </div>
+        </div>
+    </div>
+    
+    <div id="bookings" class="dashboard-section">
+    <h2 class="section-title">Book Sports Venues</h2>
+    <div class="cards-grid">
+      <a href="{{ url_for('venue') }}" class="card" style="text-decoration: none; color: inherit;">
+      <h3>Venue Booking</h3>
+      <p>Find and book the perfect courts and fields near you.</p>
+      </a>
+     </div>
+   </div>
+
+
+    <div id="marketplace" class="dashboard-section">
+        <h2 class="section-title">Sports Marketplace</h2>
+        <div class="cards-grid">
+            <div class="card">
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">👟</div>
+                <h3>Performance Running Shoes</h3>
+                <p>Lightweight, breathable, designed for long distances.</p>
+                <p style="font-weight: bold; color: var(--primary);">₹8,500</p>
+                <button class="btn btn-accent" onclick="alert('Added to cart: Performance Running Shoes')">Add to Cart</button>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">💪</div>
+                <h3>Adjustable Dumbbell Set</h3>
+                <p>Space-saving, versatile weights for home workouts.</p>
+                <p style="font-weight: bold; color: var(--primary);">₹15,000</p>
+                <button class="btn btn-accent" onclick="alert('Added to cart: Adjustable Dumbbell Set')">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function showSection(sectionId) {
+        // Hide all sections
+        document.querySelectorAll('.dashboard-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        // Show the selected section
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            // Scroll to the section for better UX on mobile
+            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+    // Show a default section on load if needed, or keep overview
+    // window.addEventListener('load', () => showSection('overview'));
+</script>
+{% endblock %}

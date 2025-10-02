@@ -1,0 +1,189 @@
+<!-- templates/diet.html -->
+{% extends "base.html" %}
+
+{% block title %}Diet Management - CoachMePlay{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-title">Personalized Diet Management</h2>
+
+    <!-- Daily Goals -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">📊 Today's Nutrition Goals</h3>
+        <div class="cards-grid">
+            <div class="card nutrition-goal-card">
+                <h4>Calories</h4>
+                <div class="nutrition-value">1,850 / 2,200</div>
+                <div class="nutrition-bar-container">
+                    <div class="nutrition-bar-fill" style="width: 84%; background-color: var(--secondary);"></div>
+                </div>
+                <p class="nutrition-remaining">350 kcal remaining</p>
+            </div>
+            <div class="card nutrition-goal-card">
+                <h4>Protein</h4>
+                <div class="nutrition-value">95g / 120g</div>
+                <div class="nutrition-bar-container">
+                    <div class="nutrition-bar-fill" style="width: 79%; background-color: var(--primary-light);"></div>
+                </div>
+                <p class="nutrition-remaining">25g remaining</p>
+            </div>
+            <div class="card nutrition-goal-card">
+                <h4>Carbs</h4>
+                <div class="nutrition-value">180g / 220g</div>
+                <div class="nutrition-bar-container">
+                    <div class="nutrition-bar-fill" style="width: 82%; background-color: #FF9800;"></div>
+                </div>
+                <p class="nutrition-remaining">40g remaining</p>
+            </div>
+            <div class="card nutrition-goal-card">
+                <h4>Water</h4>
+                <div class="nutrition-value">6 / 8 glasses</div>
+                <div class="nutrition-bar-container">
+                    <div class="nutrition-bar-fill" style="width: 75%; background-color: #00BCD4;"></div>
+                </div>
+                <p class="nutrition-remaining">2 glasses remaining</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meal Plans -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">🍽️ Today's Meal Plan</h3>
+        <div class="cards-grid">
+            <div class="card meal-card">
+                <h4>🌅 Breakfast (7:00 AM)</h4>
+                <div class="meal-details">
+                    <p><strong>Oats with Berries & Almonds</strong></p>
+                    <ul>
+                        <li>1 cup rolled oats</li>
+                        <li>1/2 cup mixed berries</li>
+                        <li>10 almonds</li>
+                        <li>1 tbsp honey</li>
+                    </ul>
+                </div>
+                <p class="meal-nutrition"><strong>Calories:</strong> 450 kcal | <strong>Protein:</strong> 18g</p>
+                <button class="btn btn-primary" onclick="markMealEaten(this)">✓ Mark as Eaten</button>
+            </div>
+
+            <div class="card meal-card">
+                <h4>🥗 Lunch (1:00 PM)</h4>
+                <div class="meal-details">
+                    <p><strong>Grilled Chicken Salad</strong></p>
+                    <ul>
+                        <li>150g grilled chicken breast</li>
+                        <li>Mixed greens & vegetables</li>
+                        <li>1 tbsp olive oil dressing</li>
+                        <li>1 slice whole grain bread</li>
+                    </ul>
+                </div>
+                <p class="meal-nutrition"><strong>Calories:</strong> 520 kcal | <strong>Protein:</strong> 42g</p>
+                <button class="btn btn-primary" onclick="markMealEaten(this)">✓ Mark as Eaten</button>
+            </div>
+
+            <div class="card meal-card">
+                <h4>🍎 Snack (4:00 PM)</h4>
+                <div class="meal-details">
+                    <p><strong>Greek Yogurt with Nuts</strong></p>
+                    <ul>
+                        <li>1 cup Greek yogurt</li>
+                        <li>1 tbsp mixed nuts</li>
+                        <li>1 tsp chia seeds</li>
+                    </ul>
+                </div>
+                <p class="meal-nutrition"><strong>Calories:</strong> 280 kcal | <strong>Protein:</strong> 20g</p>
+                <button class="btn btn-secondary" onclick="planMealLater(this)">Plan for Later</button>
+            </div>
+
+            <div class="card meal-card">
+                <h4>🌙 Dinner (7:30 PM)</h4>
+                <div class="meal-details">
+                    <p><strong>Baked Salmon with Quinoa</strong></p>
+                    <ul>
+                        <li>150g baked salmon</li>
+                        <li>1/2 cup cooked quinoa</li>
+                        <li>Steamed broccoli</li>
+                        <li>Lemon & herbs</li>
+                    </ul>
+                </div>
+                <p class="meal-nutrition"><strong>Calories:</strong> 480 kcal | <strong>Protein:</strong> 38g</p>
+                <button class="btn btn-secondary" onclick="planMealLater(this)">Plan for Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe Library -->
+    <div style="margin-bottom: 3rem;">
+        <h3 class="section-title" style="font-size: 1.5rem; color: var(--primary);">📚 Healthy Recipe Library</h3>
+        <div class="cards-grid">
+            <div class="card recipe-card">
+                <h4>🥤 Post-Workout Protein Smoothie</h4>
+                <p class="recipe-meta"><strong>Prep Time:</strong> 5 minutes</p>
+                <p class="recipe-meta"><strong>Calories:</strong> 320 kcal | <strong>Protein:</strong> 25g</p>
+                <div class="recipe-ingredients">
+                    <p><strong>Ingredients:</strong></p>
+                    <ul>
+                        <li>1 banana</li>
+                        <li>1 cup almond milk</li>
+                        <li>1 scoop protein powder</li>
+                        <li>1 tbsp peanut butter</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Viewing recipe for Post-Workout Protein Smoothie...', 'info')">View Recipe</button>
+            </div>
+
+            <div class="card recipe-card">
+                <h4>🥙 High-Protein Chicken Wrap</h4>
+                <p class="recipe-meta"><strong>Prep Time:</strong> 15 minutes</p>
+                <p class="recipe-meta"><strong>Calories:</strong> 450 kcal | <strong>Protein:</strong> 35g</p>
+                <div class="recipe-ingredients">
+                    <p><strong>Ingredients:</strong></p>
+                    <ul>
+                        <li>Whole wheat tortilla</li>
+                        <li>Grilled chicken breast</li>
+                        <li>Mixed greens</li>
+                        <li>Avocado</li>
+                        <li>Low-fat cheese</li>
+                        <li>Mustard or hummus</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Viewing recipe for High-Protein Chicken Wrap...', 'info')">View Recipe</button>
+            </div>
+
+             <div class="card recipe-card">
+                <h4>🥗 Quinoa Buddha Bowl</h4>
+                <p class="recipe-meta"><strong>Prep Time:</strong> 20 minutes</p>
+                <p class="recipe-meta"><strong>Calories:</strong> 520 kcal | <strong>Protein:</strong> 22g</p>
+                <div class="recipe-ingredients">
+                    <p><strong>Ingredients:</strong></p>
+                    <ul>
+                        <li>1/2 cup cooked quinoa</li>
+                        <li>Roasted vegetables (broccoli, sweet potato)</li>
+                        <li>Chickpeas</li>
+                        <li>Spinach</li>
+                        <li>Tahini dressing</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="window.CoachMePlay.showNotification('Viewing recipe for Quinoa Buddha Bowl...', 'info')">View Recipe</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function markMealEaten(button) {
+        button.textContent = '✓ Eaten';
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-secondary');
+        button.disabled = true;
+        window.CoachMePlay.showNotification('Meal marked as eaten!', 'success');
+    }
+
+    function planMealLater(button) {
+        button.textContent = 'Planned';
+        button.classList.remove('btn-secondary');
+        button.classList.add('btn-primary');
+        button.disabled = true;
+        window.CoachMePlay.showNotification('Meal added to your plan for later.', 'info');
+    }
+</script>
+{% endblock %}
