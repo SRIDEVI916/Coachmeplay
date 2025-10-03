@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Task - CoachMePlay</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .assign-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .form-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .athlete-select { padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; width: 100%; font-size: 16px; }
+        .priority-options { display: flex; gap: 15px; margin-top: 10px; }
+        .priority-btn { padding: 10px 20px; border: 2px solid #d1d5db; border-radius: 6px; background: white; cursor: pointer; transition: all 0.2s; }
+        .priority-btn.selected { border-color: #2563eb; background: #dbeafe; color: #1e40af; font-weight: bold; }
+        .priority-btn.high { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+        .priority-btn.medium { border-color: #f59e0b; background: #fef3c7; color: #92400e; }
+        .priority-btn.low { border-color: #10b981; background: #d1fae5; color: #065f46; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">CoachMePlay</a>
+            <ul class="navbar-menu">
+                <li><a href="/coach/dashboard">Dashboard</a></li>
+                <li><a href="/coach/requests">Requests</a></li>
+                <li><a href="/coach/analytics">Analytics</a></li>
+                <li><a href="/coach/assign-task">Assign Task</a></li>
+                <li><a href="/coach/profile">Profile</a></li>
+                <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="assign-container">
+        <h1>📋 Assign Task to Athlete</h1>
+        <p style="color: #6b7280; margin-bottom: 20px;">Create training tasks and assignments for your athletes</p>
+
+        <div class="form-card">
+            <div id="alert" style="display: none; margin-bottom: 20px;"></div>
+
+            <form id="assignForm">
+                <div class="form-group">
+                    <label for="athleteSelect">Select Athlete *</label>
+                    <select id="athleteSelect" class="athlete-select" required>
+                        <option value="">-- Choose an athlete --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskTitle">Task Title *</label>
+                    <input type="text" id="taskTitle" required placeholder="e.g., Complete 5K run in under 30 minutes">
+                </div>
+
+                <div class="form-group">
+                    <label for="taskDescription">Task Description</label>
+                    <textarea id="taskDescription" rows="4" placeholder="Provide detailed instructions for the task..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueDate">Due Date *</label>
+                    <input type="date" id="dueDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Priority Level *</label>
+                    <div class="priority-options">
+                        <button type="button" class="priority-btn low" data-priority="low" onclick="selectPriority('low')">
+                            Low Priority
+                        </button>
+                        <button type="button" class="priority-btn medium selected" data-priority="medium" onclick="selectPriority('medium')">
+                            Medium Priority
+                        </button>
+                        <button type="button" class="priority-btn high" data-priority="high" onclick="selectPriority('high')">
+                            High Priority
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success" style="margin-top: 20px; width: 100%;">
+                    ✓ Assign Task
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script>
+    (function() {
+        const API_URL = 'http://localhost:5000/api';
+        let coachId = null;
+        let selectedPriority = 'medium';
+        
+        checkAuth();
+        
+        async function init() {
+            const userId = localStorage.getItem('user_id');
+            try {
+                const res = await fetch(API_URL + '/coach/coach-info/' + userId, { headers: getAuthHeader() });
+                const data = await res.json();
+                if (res.ok) {
+                    coachId = data.coach_id;
+                    loadAthletes();
+                }
+            } catch(e) { console.error(e); }
+            
+            // Set minimum date to today
+            document.getElementById('dueDate').min = new Date().toISOString().split('T')[0];
+        }
+        
+        async function loadAthletes() {
+            try {
+                const res = await fetch(API_URL + '/coach/my-athletes/' + coachId, { headers: getAuthHeader() });
+                const data = await res.json();
+                const select = document.getElementById('athleteSelect');
+                
+                if (data.athletes && data.athletes.length > 0) {
+                    select.innerHTML = '<option value="">-- Choose an athlete --</option>' +
+                        data.athletes.map(athlete => 
+                            `<option value="${athlete.athlete_id}">${athlete.full_name} (${athlete.sport_type || 'General'})</option>`
+                        ).join('');
+                } else {
+                    select.innerHTML = '<option value="">No athletes yet - Accept requests first</option>';
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        window.selectPriority = function(priority) {
+            selectedPriority = priority;
+            document.querySelectorAll('.priority-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelector(`[data-priority="${priority}"]`).classList.add('selected');
+        };
+        
+        document.getElementById('assignForm').onsubmit = async function(e) {
+            e.preventDefault();
+            
+            const taskData = {
+                coach_id: coachId,
+                athlete_id: parseInt(document.getElementById('athleteSelect').value),
+                task_title: document.getElementById('taskTitle').value,
+                task_description: document.getElementById('taskDescription').value,
+                due_date: document.getElementById('dueDate').value,
+                priority: selectedPriority
+            };
+            
+            if (!taskData.athlete_id) {
+                showAlert('Please select an athlete', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(API_URL + '/coach/assignments', {
+                    method: 'POST',
+                    headers: getAuthHeader(),
+                    body: JSON.stringify(taskData)
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    showAlert('Task assigned successfully! 🎉', 'success');
+                    document.getElementById('assignForm').reset();
+                    selectPriority('medium');
+                } else {
+                    showAlert(data.error || 'Failed to assign task', 'error');
+                }
+            } catch(e) {
+                showAlert('Error assigning task', 'error');
+                console.error(e);
+            }
+        };
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.className = 'alert alert-' + type;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => { alert.style.display = 'none'; }, 3000);
+        }
+        
+        init();
+    })();
+    </script>
+</body>
+</html>

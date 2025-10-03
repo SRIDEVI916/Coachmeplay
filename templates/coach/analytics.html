@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Analytics - CoachMePlay</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .analytics-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 20px 0; }
+        .stat-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        .stat-label { color: #6b7280; font-size: 14px; margin-bottom: 10px; }
+        .stat-value { font-size: 42px; font-weight: bold; color: #f59e0b; }
+        .chart-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 20px 0; }
+        .chart-title { font-size: 20px; font-weight: bold; color: #1f2937; margin-bottom: 20px; }
+        .athlete-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .athlete-info { display: flex; align-items: center; gap: 15px; }
+        .athlete-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #10b981); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: bold; }
+        .athlete-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .athlete-name { font-size: 18px; font-weight: bold; color: #1f2937; }
+        .athlete-sport { color: #6b7280; font-size: 14px; }
+        .progress-indicator { text-align: right; }
+        .progress-value { font-size: 24px; font-weight: bold; color: #10b981; }
+        .progress-label { color: #6b7280; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">CoachMePlay</a>
+            <ul class="navbar-menu">
+                <li><a href="/coach/dashboard">Dashboard</a></li>
+                <li><a href="/coach/requests">Requests</a></li>
+                <li><a href="/coach/analytics">Analytics</a></li>
+                <li><a href="/coach/profile">Profile</a></li>
+                <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="analytics-container">
+        <h1>📊 Coach Analytics Dashboard</h1>
+        <p style="color: #6b7280; margin-bottom: 20px;">Monitor your athletes' performance and track your coaching impact</p>
+
+        <!-- Summary Stats -->
+        <div class="analytics-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Athletes</div>
+                <div class="stat-value" id="totalAthletes">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Athletes</div>
+                <div class="stat-value" id="activeAthletes" style="color: #10b981;">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Requests</div>
+                <div class="stat-value" id="pendingRequests" style="color: #f59e0b;">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Completed Tasks</div>
+                <div class="stat-value" id="completedTasks" style="color: #2563eb;">0</div>
+            </div>
+        </div>
+
+        <!-- Request Trends Chart -->
+        <div class="chart-card">
+            <div class="chart-title">Request Trends (Last 30 Days)</div>
+            <canvas id="requestTrendsChart" height="80"></canvas>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="analytics-grid">
+            <div class="chart-card">
+                <div class="chart-title">Request Status</div>
+                <canvas id="requestStatusChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Task Completion Rate</div>
+                <canvas id="taskCompletionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top Performing Athletes -->
+        <div class="chart-card">
+            <div class="chart-title">🏆 Your Athletes</div>
+            <div id="athletesList">
+                <p>Loading athletes...</p>
+            </div>
+        </div>
+    </div>
+    <!-- Individual Athlete Performance -->
+    <div class="chart-card">
+        <div class="chart-title">📈 Individual Athlete Performance</div>
+        <div id="individualPerformance">
+          <p>Loading individual athlete data...</p>
+        </div>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script>
+    (function() {
+        const API_URL = 'http://localhost:5000/api';
+        let coachId = null;
+        let requestTrendsChart, requestStatusChart, taskCompletionChart;
+        
+        checkAuth();
+        
+        async function init() {
+            const userId = localStorage.getItem('user_id');
+            try {
+                const res = await fetch(API_URL + '/coach/coach-info/' + userId, { headers: getAuthHeader() });
+                const data = await res.json();
+                if (res.ok) {
+                    coachId = data.coach_id;
+                    loadAnalytics();
+                    loadAthletes();
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        async function loadAnalytics() {
+            try {
+                const res = await fetch(API_URL + '/coach/analytics/' + coachId, { headers: getAuthHeader() });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    document.getElementById('totalAthletes').textContent = data.total_athletes || 0;
+                    document.getElementById('activeAthletes').textContent = data.active_athletes || 0;
+                    document.getElementById('pendingRequests').textContent = data.pending_requests || 0;
+                    document.getElementById('completedTasks').textContent = data.completed_tasks || 0;
+                    
+                    createRequestTrendsChart(data.request_trends || []);
+                    createRequestStatusChart(data.request_status || {});
+                    createTaskCompletionChart(data.task_completion || {});
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        function createRequestTrendsChart(data) {
+            const ctx = document.getElementById('requestTrendsChart').getContext('2d');
+            if (requestTrendsChart) requestTrendsChart.destroy();
+            
+            if (data.length === 0) {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.fillText('No request data yet', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            requestTrendsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.date),
+                    datasets: [{
+                        label: 'Requests Received',
+                        data: data.map(d => d.count),
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: true } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+        
+        function createRequestStatusChart(data) {
+            const ctx = document.getElementById('requestStatusChart').getContext('2d');
+            if (requestStatusChart) requestStatusChart.destroy();
+            
+            requestStatusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pending', 'Accepted', 'Rejected'],
+                    datasets: [{
+                        data: [data.pending || 0, data.accepted || 0, data.rejected || 0],
+                        backgroundColor: ['#f59e0b', '#10b981', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+        
+        function createTaskCompletionChart(data) {
+            const ctx = document.getElementById('taskCompletionChart').getContext('2d');
+            if (taskCompletionChart) taskCompletionChart.destroy();
+            
+            taskCompletionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Pending', 'In Progress', 'Completed'],
+                    datasets: [{
+                        label: 'Tasks',
+                        data: [data.pending || 0, data.in_progress || 0, data.completed || 0],
+                        backgroundColor: ['#f59e0b', '#2563eb', '#10b981']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+        
+        async function loadAthletes() {
+            try {
+                const res = await fetch(API_URL + '/coach/my-athletes/' + coachId, { headers: getAuthHeader() });
+                const data = await res.json();
+                const list = document.getElementById('athletesList');
+                
+                if (data.athletes && data.athletes.length > 0) {
+                    list.innerHTML = data.athletes.map(athlete => {
+                        const initial = athlete.full_name.charAt(0).toUpperCase();
+                        const avatarHtml = athlete.profile_picture 
+                            ? `<img src="/${athlete.profile_picture}" alt="${athlete.full_name}">` 
+                            : initial;
+                        
+                        return `
+                            <div class="athlete-card">
+                                <div class="athlete-info">
+                                    <div class="athlete-avatar">${avatarHtml}</div>
+                                    <div>
+                                        <div class="athlete-name">${athlete.full_name}</div>
+                                        <div class="athlete-sport">${athlete.sport_type || 'General Training'} • ${athlete.skill_level || 'Beginner'}</div>
+                                    </div>
+                                </div>
+                                <div class="progress-indicator">
+                                    <div class="progress-value">${athlete.age || '-'}</div>
+                                    <div class="progress-label">Age</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    list.innerHTML = '<p>No athletes yet. Accept requests to start coaching!</p>';
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        init();
+    })();
+    async function loadIndividualPerformance() {
+    try {
+        const res = await fetch(API_URL + '/coach/athlete-performance/' + coachId, { headers: getAuthHeader() });
+        const data = await res.json();
+        const container = document.getElementById('individualPerformance');
+        
+        if (data.performance && data.performance.length > 0) {
+            container.innerHTML = data.performance.map(athlete => {
+                return `
+                    <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <h3 style="margin: 0; color: #1f2937;">${athlete.athlete_name}</h3>
+                                <p style="color: #6b7280; margin: 5px 0 0 0;">${athlete.sport_type || 'General Training'}</p>
+                            </div>
+                            <a href="/coach/athlete-detail?athlete_id=${athlete.athlete_id}" class="btn btn-primary">View Details</a>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                            <div style="text-align: center;">
+                                <div style="color: #6b7280; font-size: 13px;">Total Workouts</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #2563eb;">${athlete.total_workouts}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: #6b7280; font-size: 13px;">Active Goals</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${athlete.active_goals}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: #6b7280; font-size: 13px;">Completed Goals</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #10b981;">${athlete.completed_goals}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: #6b7280; font-size: 13px;">Tasks Done</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #8b5cf6;">${athlete.completed_tasks}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            container.innerHTML = '<p>No athlete performance data yet.</p>';
+        }
+    } catch(e) { console.error(e); }
+}
+
+    </script>
+</body>
+</html>

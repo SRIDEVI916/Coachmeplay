@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Profile - CoachMePlay</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .profile-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .profile-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .profile-header { display: flex; align-items: center; margin-bottom: 30px; }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #ef4444); display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold; margin-right: 30px; overflow: hidden; position: relative; cursor: pointer; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .stat-box { background: #f9fafb; padding: 15px; border-radius: 6px; text-align: center; }
+        .stat-label { color: #6b7280; font-size: 14px; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #1f2937; margin-top: 5px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .rating-display { color: #f59e0b; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">CoachMePlay</a>
+            <ul class="navbar-menu">
+                <li><a href="/coach/dashboard">Dashboard</a></li>
+                <li><a href="/coach/requests">Requests</a></li>
+                <li><a href="/coach/profile">Profile</a></li>
+                <li><a href="/coach/analytics">Analytics</a></li>
+                <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <h1>👨‍🏫 My Coach Profile</h1>
+        
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar" id="avatarContainer" onclick="document.getElementById('fileInput').click()" title="Click to upload picture">
+                    <span id="avatarInitial">C</span>
+                </div>
+                <div>
+                    <h2 id="profileName">Loading...</h2>
+                    <p style="color: #6b7280;" id="profileEmail">Loading...</p>
+                    <div class="rating-display" id="ratingDisplay">⭐ 0.0 (0 reviews)</div>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Experience</div>
+                    <div class="stat-value" id="displayExperience">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Hourly Rate</div>
+                    <div class="stat-value" id="displayRate">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Athletes</div>
+                    <div class="stat-value" id="displayAthletes">0</div>
+                </div>
+            </div>
+
+            <div id="alert" style="display: none; margin-bottom: 20px;"></div>
+
+            <form id="profileForm">
+                <h3>Professional Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="specialization">Specialization</label>
+                        <input type="text" id="specialization" name="specialization" placeholder="e.g., Track & Field, Swimming">
+                    </div>
+                    <div class="form-group">
+                        <label for="experience_years">Years of Experience</label>
+                        <input type="number" id="experience_years" name="experience_years" placeholder="5">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="hourly_rate">Hourly Rate ($)</label>
+                        <input type="number" step="0.01" id="hourly_rate" name="hourly_rate" placeholder="50.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="certifications">Certifications</label>
+                        <input type="text" id="certifications" name="certifications" placeholder="NASM, ACE, etc.">
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">About Me</h3>
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" rows="4" placeholder="Tell athletes about your coaching background..."></textarea>
+                </div>
+
+                <h3 style="margin-top: 30px;">Coaching Philosophy</h3>
+                <div class="form-group">
+                    <label for="coaching_philosophy">Your Coaching Approach</label>
+                    <textarea id="coaching_philosophy" name="coaching_philosophy" rows="4" placeholder="Describe your coaching philosophy and methods..."></textarea>
+                </div>
+
+                <h3 style="margin-top: 30px;">Achievements</h3>
+                <div class="form-group">
+                    <label for="achievements">Achievements & Awards</label>
+                    <textarea id="achievements" name="achievements" rows="4" placeholder="List your achievements, certifications, awards..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script>
+    (function() {
+        const API_URL = 'http://localhost:5000/api';
+        let coachId = null, userId = null;
+        checkAuth();
+        
+        async function init() {
+            userId = localStorage.getItem('user_id');
+            const fullName = localStorage.getItem('full_name');
+            document.getElementById('profileName').textContent = fullName || 'Coach';
+            document.getElementById('avatarInitial').textContent = fullName ? fullName.charAt(0).toUpperCase() : 'C';
+            
+            try {
+                const res = await fetch(API_URL + '/auth/profile', { headers: getAuthHeader() });
+                const data = await res.json();
+                if (res.ok) {
+                    document.getElementById('profileEmail').textContent = data.email;
+                    if (data.profile_picture) {
+                        document.getElementById('avatarContainer').innerHTML = '<img src="' + data.profile_picture + '" alt="Profile">';
+                    }
+                }
+            } catch(e) { console.error(e); }
+            
+            try {
+                const res = await fetch(API_URL + '/coach/coach-info/' + userId, { headers: getAuthHeader() });
+                const data = await res.json();
+                if (res.ok) { 
+                    coachId = data.coach_id; 
+                    loadProfile();
+                    loadAthleteCount();
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        async function loadProfile() {
+            try {
+                const res = await fetch(API_URL + '/coach/profile/' + coachId, { headers: getAuthHeader() });
+                const data = await res.json();
+                if (res.ok && data.profile) {
+                    const p = data.profile;
+                    document.getElementById('specialization').value = p.specialization || '';
+                    document.getElementById('experience_years').value = p.experience_years || '';
+                    document.getElementById('hourly_rate').value = p.hourly_rate || '';
+                    document.getElementById('certifications').value = p.certifications || '';
+                    document.getElementById('bio').value = p.bio || '';
+                    document.getElementById('coaching_philosophy').value = p.coaching_philosophy || '';
+                    document.getElementById('achievements').value = p.achievements || '';
+                    
+                    document.getElementById('displayExperience').textContent = p.experience_years ? p.experience_years + ' years' : '-';
+                    document.getElementById('displayRate').textContent = p.hourly_rate ? '$' + p.hourly_rate + '/hr' : '-';
+                    document.getElementById('ratingDisplay').textContent = '⭐ ' + (p.rating || '0.0') + ' (' + (p.total_reviews || 0) + ' reviews)';
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        async function loadAthleteCount() {
+            try {
+                const res = await fetch(API_URL + '/coach/my-athletes/' + coachId, { headers: getAuthHeader() });
+                const data = await res.json();
+                if (res.ok) {
+                    document.getElementById('displayAthletes').textContent = data.athletes.length;
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        document.getElementById('fileInput').onchange = async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('user_id', userId);
+            try {
+                const res = await fetch(API_URL + '/coach/upload-picture', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showAlert('Profile picture updated! 🎉', 'success');
+                    document.getElementById('avatarContainer').innerHTML = '<img src="' + data.file_path + '" alt="Profile">';
+                } else {
+                    showAlert(data.error || 'Failed to upload picture', 'error');
+                }
+            } catch(e) { showAlert('Error uploading picture', 'error'); }
+        };
+        
+        document.getElementById('profileForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = {
+                coach_id: coachId,
+                specialization: document.getElementById('specialization').value,
+                experience_years: parseInt(document.getElementById('experience_years').value) || null,
+                hourly_rate: parseFloat(document.getElementById('hourly_rate').value) || null,
+                certifications: document.getElementById('certifications').value,
+                bio: document.getElementById('bio').value,
+                coaching_philosophy: document.getElementById('coaching_philosophy').value,
+                achievements: document.getElementById('achievements').value
+            };
+            try {
+                const res = await fetch(API_URL + '/coach/profile', { 
+                    method: 'PUT', 
+                    headers: getAuthHeader(), 
+                    body: JSON.stringify(formData) 
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showAlert('Profile updated successfully! 🎉', 'success');
+                    loadProfile();
+                } else {
+                    showAlert(data.error || 'Failed to update profile', 'error');
+                }
+            } catch(e) { showAlert('Error updating profile', 'error'); }
+        };
+        init();
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+from flask import Blueprint, request, jsonify, current_app
+import bcrypt
+import jwt
+from datetime import datetime
+from functools import wraps
+
+auth_bp = Blueprint('auth', __name__)
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        
+        if not token:
+            return jsonify({'error': 'Token is missing'}), 401
+        
+        try:
+            if token.startswith('Bearer '):
+                token = token[7:]
+            data = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
+            current_user = data
+        except jwt.ExpiredSignatureError:
+            return jsonify({'error': 'Token has expired'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'error': 'Invalid token'}), 401
+        
+        return f(current_user, *args, **kwargs)
+    
+    return decorated
+
+@auth_bp.route('/register', methods=['POST'])
+def register():
+    print("=== REGISTER ENDPOINT CALLED ===")
+    data = request.json
+    print(f"Received data: {data}")
+    
+    # Import mysql from app module
+    from app import mysql
+    
+    # Validate required fields
+    required_fields = ['email', 'password', 'user_type', 'full_name', 'phone_number', 'date_of_birth']
+    if not all(field in data for field in required_fields):
+        print("ERROR: Missing required fields")
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    print("All fields present, hashing password...")
+    # Hash password
+    hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    print(f"Password hashed successfully")
+    
+    cursor = mysql.connection.cursor()
+    
+    try:
+        # Check if email already exists
+        cursor.execute("SELECT user_id FROM users WHERE email = %s", (data['email'],))
+        if cursor.fetchone():
+            print(f"ERROR: Email {data['email']} already registered")
+            cursor.close()
+            return jsonify({'error': 'Email already registered'}), 400
+        
+        print("Inserting user into database...")
+        # Insert user
+        cursor.execute(
+            """INSERT INTO users (email, password_hash, user_type, full_name, phone_number, date_of_birth) 
+               VALUES (%s, %s, %s, %s, %s, %s)""",
+            (data['email'], hashed_password, data['user_type'], data['full_name'], 
+             data['phone_number'], data['date_of_birth'])
+        )
+        user_id = cursor.lastrowid
+        print(f"User inserted with ID: {user_id}")
+        
+        # Create role-specific record
+        if data['user_type'] == 'athlete':
+            print("Creating athlete record...")
+            cursor.execute("INSERT INTO athletes (user_id) VALUES (%s)", (user_id,))
+        else:
+            print("Creating coach record...")
+            cursor.execute("INSERT INTO coaches (user_id) VALUES (%s)", (user_id,))
+        
+        mysql.connection.commit()
+        print("SUCCESS: Registration complete!")
+        cursor.close()
+        return jsonify({'message': 'Registration successful', 'user_id': user_id}), 201
+        
+    except Exception as e:
+        print(f"ERROR during registration: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        mysql.connection.rollback()
+        cursor.close()
+        return jsonify({'error': str(e)}), 500
+
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    print("=== LOGIN ENDPOINT CALLED ===")
+    data = request.json
+    print(f"Login attempt for: {data.get('email')}")
+    
+    # Import mysql from app module
+    from app import mysql
+    
+    if not data.get('email') or not data.get('password'):
+        return jsonify({'error': 'Email and password required'}), 400
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = %s", (data['email'],))
+    user = cursor.fetchone()
+    
+    if user:
+        print(f"User found: {user['email']}")
+        if bcrypt.checkpw(data['password'].encode('utf-8'), user['password_hash'].encode('utf-8')):
+            print("Password correct, generating token...")
+            # Update last login
+            cursor.execute("UPDATE users SET last_login = NOW() WHERE user_id = %s", (user['user_id'],))
+            mysql.connection.commit()
+            cursor.close()
+            
+            # Generate JWT token
+            token = jwt.encode({
+                'user_id': user['user_id'],
+                'user_type': user['user_type'],
+                'email': user['email'],
+                'exp': datetime.utcnow() + current_app.config['JWT_ACCESS_TOKEN_EXPIRES']
+            }, current_app.config['JWT_SECRET_KEY'], algorithm='HS256')
+            
+            print("Login successful!")
+            return jsonify({
+                'token': token,
+                'user_type': user['user_type'],
+                'user_id': user['user_id'],
+                'full_name': user['full_name']
+            }), 200
+        else:
+            print("Password incorrect")
+    else:
+        print("User not found")
+    
+    cursor.close()
+    return jsonify({'error': 'Invalid credentials'}), 401
+
+@auth_bp.route('/profile', methods=['GET'])
+@token_required
+def get_profile(current_user):
+    from app import mysql
+    cursor = mysql.connection.cursor()
+    
+    cursor.execute("SELECT user_id, email, user_type, full_name, phone_number, date_of_birth, profile_picture FROM users WHERE user_id = %s", (current_user['user_id'],))
+    user = cursor.fetchone()
+    cursor.close()
+    
+    if user:
+        return jsonify(user), 200
+    return jsonify({'error': 'User not found'}), 404
+

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coaching Requests - CoachMePlay</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .requests-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .request-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .request-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .athlete-name { font-size: 20px; font-weight: bold; color: #1f2937; }
+        .status-badge { padding: 5px 15px; border-radius: 15px; font-size: 14px; font-weight: 500; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-accepted { background: #d1fae5; color: #065f46; }
+        .status-rejected { background: #fee2e2; color: #991b1b; }
+        .request-actions { display: flex; gap: 10px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">CoachMePlay</a>
+            <ul class="navbar-menu">
+                <li><a href="/coach/dashboard">Dashboard</a></li>
+                <li><a href="/coach/requests">Requests</a></li>
+                <li><a href="/coach/profile">Profile</a></li>
+                <li><a href="/coach/analytics">Analytics</a></li>
+                <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="requests-container">
+        <h1>📋 Coaching Requests</h1>
+        <div id="requestsList">
+            <p>Loading requests...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script>
+    (function() {
+        const API_URL = 'http://localhost:5000/api';
+        let coachId = null;
+        
+        checkAuth();
+        
+        async function init() {
+            const userId = localStorage.getItem('user_id');
+            try {
+                const res = await fetch(API_URL + '/coach/coach-info/' + userId, { headers: getAuthHeader() });
+                const data = await res.json();
+                if (res.ok) {
+                    coachId = data.coach_id;
+                    loadRequests();
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        async function loadRequests() {
+            try {
+                const res = await fetch(API_URL + '/coach/coaching-requests/coach/' + coachId, { headers: getAuthHeader() });
+                const data = await res.json();
+                const list = document.getElementById('requestsList');
+                
+                if (data.requests && data.requests.length > 0) {
+                    list.innerHTML = data.requests.map(req => {
+                        const statusClass = 'status-' + req.status;
+                        const showActions = req.status === 'pending';
+                        
+                        return `
+                            <div class="request-card">
+                                <div class="request-header">
+                                    <div class="athlete-name">${req.athlete_name}</div>
+                                    <span class="status-badge ${statusClass}">${req.status.toUpperCase()}</span>
+                                </div>
+                                <div style="color: #6b7280; margin-bottom: 10px;">
+                                    📧 ${req.athlete_email}
+                                </div>
+                                <div style="color: #4b5563; margin-bottom: 10px;">
+                                    📅 ${new Date(req.request_date).toLocaleString()}
+                                </div>
+                                <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 15px 0;">
+                                    <strong>Message:</strong><br>
+                                    ${req.message}
+                                </div>
+                                <a href="/coach/athlete-detail?athlete_id=${req.athlete_id}" style="text-decoration: none;">
+                                    <button class="btn btn-primary" style="margin-bottom: 10px; width: 100%;">
+                                        👤 View Athlete Profile
+                                    </button>
+                                </a>
+                                ${showActions ? `
+                                    <div class="request-actions">
+                                        <button class="btn btn-success" onclick="respondToRequest(${req.request_id}, 'accepted')">
+                                            ✓ Accept
+                                        </button>
+                                        <button class="btn btn-danger" onclick="respondToRequest(${req.request_id}, 'rejected')">
+                                            ✗ Reject
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    list.innerHTML = '<p>No requests yet.</p>';
+                }
+            } catch(e) {
+                console.error(e);
+                document.getElementById('requestsList').innerHTML = '<p>Error loading requests.</p>';
+            }
+        }
+        
+        window.respondToRequest = async function(requestId, status) {
+            try {
+                const res = await fetch(API_URL + '/coach/coaching-request/' + requestId, {
+                    method: 'PUT',
+                    headers: getAuthHeader(),
+                    body: JSON.stringify({ status: status })
+                });
+                
+                if (res.ok) {
+                    alert('Request ' + status + ' successfully!');
+                    loadRequests();
+                } else {
+                    alert('Error responding to request');
+                }
+            } catch(e) {
+                console.error(e);
+                alert('Error responding to request');
+            }
+        };
+        
+        init();
+    })();
+    </script>
+</body>
+</html>

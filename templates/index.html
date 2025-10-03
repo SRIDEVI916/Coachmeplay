@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoachMePlay - Sports Coaching Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+            color: white;
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .feature-card h3 {
+            color: #2563eb;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">CoachMePlay</a>
+            <ul class="navbar-menu">
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Welcome to CoachMePlay</h1>
+        <p>Your Complete Sports Coaching & Training Platform</p>
+        <div class="cta-buttons">
+            <a href="/register" class="btn btn-primary" style="background: white; color: #2563eb; text-decoration: none; padding: 15px 30px; border-radius: 6px; font-weight: bold;">Get Started</a>
+            <a href="/login" class="btn" style="background: transparent; color: white; text-decoration: none; padding: 15px 30px; border-radius: 6px; border: 2px solid white; font-weight: bold;">Sign In</a>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <h3>🏃 Performance Tracking</h3>
+            <p>Track and monitor your athletic performance with detailed metrics and progress charts.</p>
+        </div>
+        <div class="feature-card">
+            <h3>👨‍🏫 Expert Coaches</h3>
+            <p>Connect with certified coaches who can guide you to achieve your sports goals.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🥗 Diet & Nutrition</h3>
+            <p>Access personalized diet plans and nutrition recipes for optimal performance.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🛒 Sports Marketplace</h3>
+            <p>Shop for quality sports equipment and gear from our curated collection.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🏟️ Venue Booking</h3>
+            <p>Book sports venues and facilities for your training sessions easily.</p>
+        </div>
+        <div class="feature-card">
+            <h3>📊 Real-time Feedback</h3>
+            <p>Receive instant feedback from your coach to improve your technique and skills.</p>
+        </div>
+    </div>
+</body>
+</html>
+
