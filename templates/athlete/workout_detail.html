@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Plan Details - CoachMePlay</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background: #f5f7fa;
+            font-family: 'Poppins', sans-serif;
+            color: #22223a;
+            margin: 0;
+        }
+        .dashboard {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .page-header {
+            background: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .page-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+        }
+        .page-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        .content-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .content-section h2 {
+            color: #10b981;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        .content-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .about-plan {
+            background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 2px solid #10b981;
+        }
+        .about-plan h3 {
+            color: #10b981;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .about-plan p {
+            color: #555;
+            line-height: 1.8;
+            margin: 0;
+            font-size: 15px;
+        }
+        .session-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        .session-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            border-color: #10b981;
+        }
+        .session-card h3 {
+            color: #10b981;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        .session-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+        }
+        .exercise-list {
+            margin-top: 20px;
+        }
+        .exercise-list h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .exercise-item {
+            background: #f8f9fa;
+            padding: 15px 18px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #e8eaed;
+            transition: all 0.3s;
+        }
+        .exercise-item:hover {
+            background: #e8f5e9;
+            border-color: #10b981;
+            transform: translateX(5px);
+        }
+        .exercise-item strong {
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .exercise-details {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #666;
+            flex-wrap: wrap;
+        }
+        .exercise-details span {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+            font-size: 18px;
+        }
+        .error-message {
+            text-align: center;
+            color: #e74c3c;
+            padding: 50px;
+            background: #fee;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #e74c3c;
+            font-size: 16px;
+        }
+        .btn-back {
+            background: white;
+            color: #10b981;
+            border: 2px solid #10b981;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .btn-back:hover {
+            background: #10b981;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+        }
+        .btn-start-session {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+        .btn-start-session:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+        .session-header h3 {
+            margin: 0;
+        }
+        nav.navbar {
+            background: #2563eb;
+            box-shadow: 0 3px 16px rgba(37, 99, 235, 0.12);
+            padding: 15px 0;
+            margin-bottom: 0;
+        }
+        nav.navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-weight: 700;
+            font-size: 26px;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .navbar-menu {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+        .navbar-menu li a {
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            transition: background 0.16s, color 0.16s;
+            display: block;
+        }
+        .navbar-menu li a:hover {
+            background: #10b981;
+            color: #fff;
+        }
+        footer.footer {
+            background: #2563eb;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            margin-top: 48px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 -3px 14px #10b98144;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">CoachMePlay</a>
+            <ul class="navbar-menu">
+                <li><a href="/athlete/dashboard">Dashboard</a></li>
+                <li><a href="/athlete/profile">Profile</a></li>
+                <li><a href="/athlete/my-workouts" class="active">My Workouts</a></li>
+                <li><a href="/athlete/performance">Performance</a></li>
+                <li><a href="/messages">Messages</a></li>
+                <li class="notification-wrapper">
+                    <a href="#" id="notificationBell" class="notification-bell">
+                        Notifications
+                        <span id="notificationBadge" class="notification-badge">0</span>
+                    </a>
+                    <div id="notificationDropdown" class="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <a href="#" onclick="markAllAsRead(); return false;" class="mark-all-read">Mark all read</a>
+                        </div>
+                        <div id="notificationList" class="notification-list">
+                            <div class="notification-item empty">Loading...</div>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="page-header">
+            <button onclick="window.history.back()" class="btn-back">
+                ← Back
+            </button>
+            <div>
+                <h1 id="planName">Workout Plan 💪</h1>
+                <p id="planDescription">Loading...</p>
+            </div>
+        </div>
+
+        <div id="planContent" class="content-section">
+            <p class="loading">Loading workout details...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+        
+        // Verify user type (allow both coach and athlete to view)
+        const userType = localStorage.getItem('user_type');
+        if (!userType) {
+            alert('Please login to continue.');
+            window.location.href = '/login';
+        }
+
+        const planId = window.location.pathname.split('/').pop();
+
+        async function loadWorkoutDetails() {
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`${API_URL}/coach/workout-plans/detail/${planId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayWorkoutDetails(data.plan);
+                } else {
+                    document.getElementById('planContent').innerHTML = 
+                        '<p class="error-message">❌ Failed to load workout details. Please try again later.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading workout details:', error);
+                document.getElementById('planContent').innerHTML = 
+                    '<p class="error-message">❌ An error occurred while loading workout details.</p>';
+            }
+        }
+
+        function displayWorkoutDetails(plan) {
+            document.getElementById('planName').textContent = plan.plan_name + ' 💪';
+            
+            const difficultyIcon = {
+                'beginner': '🟢',
+                'intermediate': '🟡',
+                'advanced': '🔴'
+            };
+            
+            const icon = difficultyIcon[plan.difficulty_level.toLowerCase()] || '⚪';
+            
+            document.getElementById('planDescription').textContent = 
+                `${icon} ${plan.difficulty_level} • ${plan.duration_weeks} weeks • ${plan.sessions.length} sessions`;
+
+            const container = document.getElementById('planContent');
+            
+            container.innerHTML = `
+                <div class="about-plan">
+                    <h3>📋 About This Plan</h3>
+                    <p>${plan.description || 'No description provided'}</p>
+                </div>
+
+                <h2>Workout Sessions</h2>
+                ${plan.sessions.map(session => `
+                    <div class="session-card">
+                        <div class="session-header">
+                            <h3>📅 Day ${session.day_number}: ${session.session_name}</h3>
+                            <button onclick="startSession(${session.session_id}, ${plan.plan_id})" class="btn-start-session">
+                                🏃 Start Session
+                            </button>
+                        </div>
+                        ${session.description ? `<p class="session-description">${session.description}</p>` : ''}
+                        
+                        <div class="exercise-list">
+                            <h4>💪 Exercises:</h4>
+                            ${session.exercises.length > 0 ? session.exercises.map(ex => `
+                                <div class="exercise-item">
+                                    <strong>${ex.exercise_name}</strong>
+                                    <div class="exercise-details">
+                                        ${ex.sets ? `<span>📊 Sets: ${ex.sets}</span>` : ''}
+                                        ${ex.reps ? `<span>🔢 Reps: ${ex.reps}</span>` : ''}
+                                        ${ex.duration ? `<span>⏱️ Duration: ${ex.duration}</span>` : ''}
+                                        ${ex.rest_time ? `<span>⏸️ Rest: ${ex.rest_time}</span>` : ''}
+                                    </div>
+                                </div>
+                            `).join('') : '<p style="color: #999; padding: 20px; text-align: center; background: #f8f9fa; border-radius: 8px;">No exercises added yet</p>'}
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function startSession(sessionId, planId) {
+            // Store session info for potential use
+            localStorage.setItem('current_session', sessionId);
+            localStorage.setItem('current_plan', planId);
+            
+            // Navigate to workout session page
+            window.location.href = `/athlete/workout-session?session=${sessionId}&plan=${planId}`;
+        }
+
+        loadWorkoutDetails();
+    </script>
+</body>
+</html>
+

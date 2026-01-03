@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+
+# Database backups (DO NOT PUSH)
+backup_*.sql
+*_database.sql
+*.sql
+
+# User uploaded files
+static/uploads/
+
+# Migrations cache (keep folder, not cache)
+migrations/__pycache__/
+
+Untracked files:
+  .gitignore
+

@@ -1,26 +1,198 @@
-python3 << 'PYTHONEOF'
-content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>My Profile - CoachMePlay</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <style>
-        .profile-container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        .profile-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .profile-header { display: flex; align-items: center; margin-bottom: 30px; }
-        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #10b981); display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold; margin-right: 30px; overflow: hidden; position: relative; cursor: pointer; }
-        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
-        .stat-box { background: #f9fafb; padding: 15px; border-radius: 6px; text-align: center; }
-        .stat-label { color: #6b7280; font-size: 14px; }
-        .stat-value { font-size: 24px; font-weight: bold; color: #1f2937; margin-top: 5px; }
-        .bmi-normal { color: #10b981; }
-        .bmi-underweight { color: #f59e0b; }
-        .bmi-overweight { color: #ef4444; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .health-info { background: #f0f9ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        body {
+            background: #f0f4f8;
+            font-family: 'Poppins', sans-serif;
+            color: #22223a;
+            margin: 0;
+        }
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        .profile-card {
+            background: #fff;
+            padding: 32px 28px;
+            border-radius: 16px;
+            box-shadow: 0 6px 22px rgba(37, 99, 235, 0.09);
+            margin-bottom: 40px;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #10b981);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            margin-right: 30px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-top: 5px;
+        }
+        .bmi-normal {
+            color: #10b981;
+        }
+        .bmi-underweight {
+            color: #f59e0b;
+        }
+        .bmi-overweight {
+            color: #ef4444;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+            gap: 24px;
+        }
+        label {
+            font-weight: 600;
+            color: #22223a;
+            display: block;
+            margin-bottom: 6px;
+        }
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+        }
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 6px #10b98155;
+        }
+        .btn {
+            background: #10b981 !important;
+            color: #fff !important;
+            font-weight: 700;
+            border-radius: 28px;
+            padding: 14px 32px;
+            box-shadow: 0 2px 13px rgba(16, 185, 129, 0.10);
+            border: none;
+            cursor: pointer;
+            transition: background 0.24s ease, box-shadow 0.26s ease;
+            margin-top: 15px;
+        }
+        .btn:hover {
+            background: #0e9e63 !important;
+            box-shadow: 0 8px 26px #10b98166;
+        }
+        .health-info {
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        nav.navbar {
+            background: #2563eb;
+            box-shadow: 0 3px 16px rgba(37, 99, 235, 0.12);
+            padding: 15px 0;
+            margin-bottom: 0;
+        }
+        nav.navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-weight: 700;
+            font-size: 26px;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .navbar-menu {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+        .navbar-menu li a {
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            transition: background 0.16s, color 0.16s;
+            display: block;
+        }
+        .navbar-menu li a:hover {
+            background: #10b981;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -37,8 +209,10 @@ content = '''<!DOCTYPE html>
             </ul>
         </div>
     </nav>
+
     <div class="profile-container">
         <h1>👤 My Profile</h1>
+        
         <div class="profile-card">
             <div class="profile-header">
                 <div class="profile-avatar" id="avatarContainer" onclick="document.getElementById('fileInput').click()" title="Click to upload picture">
@@ -47,9 +221,10 @@ content = '''<!DOCTYPE html>
                 <div>
                     <h2 id="profileName">Loading...</h2>
                     <p style="color: #6b7280;" id="profileEmail">Loading...</p>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;" />
                 </div>
             </div>
+
             <div class="stats-grid">
                 <div class="stat-box">
                     <div class="stat-label">Height</div>
@@ -68,28 +243,32 @@ content = '''<!DOCTYPE html>
                     <div class="stat-value" id="displayBMI">-</div>
                 </div>
             </div>
+
             <div class="health-info" id="healthInfo" style="display: none;">
                 <strong>🏥 Health Insights:</strong>
                 <p id="bmiCategory"></p>
                 <p id="calorieRecommendation"></p>
             </div>
+
             <div id="alert" style="display: none; margin-bottom: 20px;"></div>
+
             <form id="profileForm">
                 <h3>Personal Information</h3>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="height">Height (cm)</label>
-                        <input type="number" step="0.01" id="height" name="height" placeholder="170.5">
+                        <input type="number" step="0.01" id="height" name="height" placeholder="170.5" />
                     </div>
                     <div class="form-group">
                         <label for="weight">Weight (kg)</label>
-                        <input type="number" step="0.01" id="weight" name="weight" placeholder="65.0">
+                        <input type="number" step="0.01" id="weight" name="weight" placeholder="65.0" />
                     </div>
                 </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="age">Age</label>
-                        <input type="number" id="age" name="age" placeholder="25">
+                        <input type="number" id="age" name="age" placeholder="25" />
                     </div>
                     <div class="form-group">
                         <label for="skill_level">Skill Level</label>
@@ -102,155 +281,206 @@ content = '''<!DOCTYPE html>
                         </select>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label for="sports_interest">Sports Interest</label>
-                    <input type="text" id="sports_interest" name="sports_interest" placeholder="Running, Swimming, Basketball">
+                    <input type="text" id="sports_interest" name="sports_interest" placeholder="Running, Swimming, Basketball" />
                 </div>
+
                 <h3 style="margin-top: 30px;">About Me</h3>
                 <div class="form-group">
                     <label for="bio">Bio</label>
                     <textarea id="bio" name="bio" rows="4" placeholder="Tell coaches about yourself..."></textarea>
                 </div>
+
                 <h3 style="margin-top: 30px;">Achievements</h3>
                 <div class="form-group">
                     <label for="achievements">Achievements & Awards</label>
                     <textarea id="achievements" name="achievements" rows="4" placeholder="List your achievements, awards, personal records..."></textarea>
                 </div>
+
                 <button type="submit" class="btn btn-primary">Save Profile</button>
             </form>
         </div>
     </div>
+
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script>
-    (function() {
-        const API_URL = 'http://localhost:5000/api';
-        let athleteId = null, userId = null;
-        checkAuth();
-        
-        async function init() {
-            userId = localStorage.getItem('user_id');
-            const fullName = localStorage.getItem('full_name');
-            document.getElementById('profileName').textContent = fullName || 'Athlete';
-            document.getElementById('avatarInitial').textContent = fullName ? fullName.charAt(0).toUpperCase() : 'A';
-            try {
-                const res = await fetch(API_URL + '/auth/profile', { headers: getAuthHeader() });
-                const data = await res.json();
-                if (res.ok) {
-                    document.getElementById('profileEmail').textContent = data.email;
-                    if (data.profile_picture) {
-                        document.getElementById('avatarContainer').innerHTML = '<img src="' + data.profile_picture + '" alt="Profile">';
-                    }
+        (function () {
+            const API_URL = 'http://localhost:5000/api';
+            let athleteId = null,
+                userId = null;
+
+            function checkAuth() {
+                if (!localStorage.getItem('token')) {
+                    window.location.href = '/login';
                 }
-            } catch(e) { console.error(e); }
-            try {
-                const res = await fetch(API_URL + '/athlete/athlete-info/' + userId, { headers: getAuthHeader() });
-                const data = await res.json();
-                if (res.ok) { athleteId = data.athlete_id; loadProfile(); }
-            } catch(e) { console.error(e); }
-        }
-        
-        function calculateBMI(height, weight) {
-            if (!height || !weight) return null;
-            const heightM = height / 100;
-            return (weight / (heightM * heightM)).toFixed(2);
-        }
-        
-        function getBMICategory(bmi) {
-            if (bmi < 18.5) return { text: 'Underweight', class: 'bmi-underweight' };
-            if (bmi < 25) return { text: 'Normal', class: 'bmi-normal' };
-            if (bmi < 30) return { text: 'Overweight', class: 'bmi-overweight' };
-            return { text: 'Obese', class: 'bmi-overweight' };
-        }
-        
-        async function loadProfile() {
-            try {
-                const res = await fetch(API_URL + '/athlete/profile/' + athleteId, { headers: getAuthHeader() });
-                const data = await res.json();
-                if (res.ok && data.profile) {
-                    const p = data.profile;
-                    document.getElementById('height').value = p.height || '';
-                    document.getElementById('weight').value = p.weight || '';
-                    document.getElementById('age').value = p.age || '';
-                    document.getElementById('skill_level').value = p.skill_level || '';
-                    document.getElementById('sports_interest').value = p.sports_interest || '';
-                    document.getElementById('bio').value = p.bio || '';
-                    document.getElementById('achievements').value = p.achievements || '';
-                    document.getElementById('displayHeight').textContent = p.height ? p.height + ' cm' : '-';
-                    document.getElementById('displayWeight').textContent = p.weight ? p.weight + ' kg' : '-';
-                    document.getElementById('displayAge').textContent = p.age || '-';
-                    if (p.height && p.weight) {
-                        const bmi = calculateBMI(p.height, p.weight);
-                        const category = getBMICategory(bmi);
-                        document.getElementById('displayBMI').textContent = bmi;
-                        document.getElementById('displayBMI').className = 'stat-value ' + category.class;
-                    }
-                }
-            } catch(e) { console.error(e); }
-        }
-        
-        document.getElementById('fileInput').onchange = async function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('user_id', userId);
-            try {
-                const res = await fetch(API_URL + '/athlete/upload-picture', {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-                    body: formData
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    showAlert('Profile picture updated! 🎉', 'success');
-                    document.getElementById('avatarContainer').innerHTML = '<img src="' + data.file_path + '" alt="Profile">';
-                } else {
-                    showAlert(data.error || 'Failed to upload picture', 'error');
-                }
-            } catch(e) { showAlert('Error uploading picture', 'error'); }
-        };
-        
-        document.getElementById('profileForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const formData = {
-                athlete_id: athleteId,
-                height: parseFloat(document.getElementById('height').value) || null,
-                weight: parseFloat(document.getElementById('weight').value) || null,
-                age: parseInt(document.getElementById('age').value) || null,
-                skill_level: document.getElementById('skill_level').value,
-                sport_type: document.getElementById('sports_interest').value,
-                sports_interest: document.getElementById('sports_interest').value,
-                bio: document.getElementById('bio').value,
-                achievements: document.getElementById('achievements').value
-            };
-            try {
-                const res = await fetch(API_URL + '/athlete/profile', { method: 'PUT', headers: getAuthHeader(), body: JSON.stringify(formData) });
-                const data = await res.json();
-                if (res.ok) {
-                    showAlert('Profile updated successfully! 🎉', 'success');
-                    if (data.bmi) {
-                        const category = getBMICategory(data.bmi);
-                        document.getElementById('displayBMI').textContent = data.bmi;
-                        document.getElementById('displayBMI').className = 'stat-value ' + category.class;
-                        document.getElementById('bmiCategory').textContent = 'BMI Category: ' + data.bmi_category;
-                        if (data.recommended_calories) {
-                            document.getElementById('calorieRecommendation').textContent = 'Recommended Daily Calories: ' + data.recommended_calories + ' kcal (moderate activity)';
+            }
+
+            function getAuthHeader() {
+                return {
+                    Authorization: 'Bearer ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json',
+                };
+            }
+
+            function showAlert(message, type) {
+                const alert = document.getElementById('alert');
+                alert.className = 'alert alert-' + type;
+                alert.textContent = message;
+                alert.style.display = 'block';
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 3000);
+            }
+
+            checkAuth();
+
+            async function init() {
+                userId = localStorage.getItem('user_id');
+                const fullName = localStorage.getItem('full_name');
+                document.getElementById('profileName').textContent = fullName || 'Athlete';
+                document.getElementById('avatarInitial').textContent = fullName ? fullName.charAt(0).toUpperCase() : 'A';
+
+                try {
+                    const res = await fetch(API_URL + '/auth/profile', { headers: getAuthHeader() });
+                    const data = await res.json();
+                    if (res.ok && data.profile) {
+                        document.getElementById('profileEmail').textContent = data.profile.email;
+                        if (data.profile.profile_picture) {
+                            document.getElementById('avatarContainer').innerHTML =
+                                '<img src="' + data.profile.profile_picture + '" alt="Profile" />';
                         }
-                        document.getElementById('healthInfo').style.display = 'block';
                     }
-                    loadProfile();
-                } else {
-                    showAlert(data.error || 'Failed to update profile', 'error');
+                } catch (e) {
+                    console.error(e);
                 }
-            } catch(e) { showAlert('Error updating profile', 'error'); }
-        };
-        init();
-    })();
+
+                try {
+                    const res = await fetch(API_URL + '/athlete/athlete-info/' + userId, { headers: getAuthHeader() });
+                    const data = await res.json();
+                    if (res.ok) {
+                        athleteId = data.athlete_id;
+                        loadProfile();
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            function calculateBMI(height, weight) {
+                if (!height || !weight) return null;
+                const heightM = height / 100;
+                return (weight / (heightM * heightM)).toFixed(2);
+            }
+
+            function getBMICategory(bmi) {
+                if (bmi < 18.5) return { text: 'Underweight', class: 'bmi-underweight' };
+                if (bmi < 25) return { text: 'Normal', class: 'bmi-normal' };
+                if (bmi < 30) return { text: 'Overweight', class: 'bmi-overweight' };
+                return { text: 'Obese', class: 'bmi-overweight' };
+            }
+
+            async function loadProfile() {
+                try {
+                    const res = await fetch(API_URL + '/athlete/profile/' + athleteId, { headers: getAuthHeader() });
+                    const data = await res.json();
+                    if (res.ok && data.profile) {
+                        const p = data.profile;
+                        document.getElementById('height').value = p.height || '';
+                        document.getElementById('weight').value = p.weight || '';
+                        document.getElementById('age').value = p.age || '';
+                        document.getElementById('skill_level').value = p.skill_level || '';
+                        document.getElementById('sports_interest').value = p.sports_interest || '';
+                        document.getElementById('bio').value = p.bio || '';
+                        document.getElementById('achievements').value = p.achievements || '';
+
+                        document.getElementById('displayHeight').textContent = p.height ? p.height + ' cm' : '-';
+                        document.getElementById('displayWeight').textContent = p.weight ? p.weight + ' kg' : '-';
+                        document.getElementById('displayAge').textContent = p.age || '-';
+
+                        if (p.height && p.weight) {
+                            const bmi = calculateBMI(p.height, p.weight);
+                            const category = getBMICategory(bmi);
+                            document.getElementById('displayBMI').textContent = bmi;
+                            document.getElementById('displayBMI').className = 'stat-value ' + category.class;
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            document.getElementById('fileInput').onchange = async function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                    const res = await fetch(API_URL + '/athlete/upload-picture', {
+                        method: 'POST',
+                        headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
+                        body: formData,
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        showAlert('Profile picture updated! 🎉', 'success');
+                        document.getElementById('avatarContainer').innerHTML =
+                            '<img src="' + data.profile_picture + '" alt="Profile" />';
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showAlert(data.error || 'Failed to upload picture', 'error');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showAlert('Error uploading picture', 'error');
+                }
+            };
+
+            document.getElementById('profileForm').onsubmit = async function (e) {
+                e.preventDefault();
+                const formData = {
+                    athlete_id: athleteId,
+                    height: parseFloat(document.getElementById('height').value) || null,
+                    weight: parseFloat(document.getElementById('weight').value) || null,
+                    age: parseInt(document.getElementById('age').value) || null,
+                    skill_level: document.getElementById('skill_level').value,
+                    sports_interest: document.getElementById('sports_interest').value,
+                    bio: document.getElementById('bio').value,
+                    achievements: document.getElementById('achievements').value,
+                };
+                try {
+                    const res = await fetch(API_URL + '/athlete/profile', {
+                        method: 'PUT',
+                        headers: getAuthHeader(),
+                        body: JSON.stringify(formData),
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        showAlert('Profile updated successfully! 🎉', 'success');
+                        if (data.bmi) {
+                            const category = getBMICategory(data.bmi);
+                            document.getElementById('displayBMI').textContent = data.bmi;
+                            document.getElementById('displayBMI').className = 'stat-value ' + category.class;
+                            document.getElementById('bmiCategory').textContent = 'BMI Category: ' + data.bmi_category;
+                            if (data.recommended_calories) {
+                                document.getElementById('calorieRecommendation').textContent =
+                                    'Recommended Daily Calories: ' + data.recommended_calories + ' kcal (moderate activity)';
+                            }
+                            document.getElementById('healthInfo').style.display = 'block';
+                        }
+                        loadProfile();
+                    } else {
+                        showAlert(data.error || 'Failed to update profile', 'error');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showAlert('Error updating profile', 'error');
+                }
+            };
+
+            init();
+        })();
     </script>
 </body>
-</html>'''
-
-with open('templates/athlete/profile.html', 'w') as f:
-    f.write(content)
-print("File created successfully!")
-PYTHONEOF
+</html>

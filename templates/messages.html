@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Messages - CoachMePlay</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            color: #22223a;
+        }
+        .navbar {
+            background: #2563eb;
+            padding: 15px 0;
+            box-shadow: 0 3px 16px rgba(37,99,235,0.12);
+        }
+        .navbar .container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+        }
+        .navbar-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .navbar-menu {
+            list-style: none;
+            display: flex;
+            gap: 18px;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-menu a {
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.16s, color 0.16s;
+        }
+        .navbar-menu a:hover, .navbar-menu a.active {
+            background: #10b981;
+            color: white;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .messages-container {
+            height: calc(100vh - 140px);
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 6px 22px rgba(37,99,235,0.09);
+            overflow: hidden;
+        }
+        .conversations-sidebar {
+            background: white;
+            border-right: 1px solid #e8eaed;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e8eaed;
+            background: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 14px 0 0 0;
+        }
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+        .new-msg-btn {
+            background: white;
+            color: #10b981;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 22px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .new-msg-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+        }
+        .search-box {
+            padding: 15px;
+            background: #fafbfc;
+            border-bottom: 1px solid #e8eaed;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+            color: #22223a;
+        }
+        .search-box input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+        .search-box input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f3f7;
+            transition: background 0.2s ease;
+        }
+        .conversation-item:hover {
+            background: #e0f7f2;
+        }
+        .conversation-item.active {
+            background: #10b98133;
+            border-left: 4px solid #10b981;
+        }
+        .conversation-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #2563eb;
+            margin-right: 14px;
+        }
+        .conversation-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .conversation-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #22223a;
+        }
+        .conversation-header .time {
+            font-size: 12px;
+            color: #666;
+        }
+        .conversation-preview p {
+            margin: 0;
+            font-size: 14px;
+            color: #444444;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .unread-badge {
+            background: #2563eb;
+            color: #fff;
+            border-radius: 14px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            background: #fafbfc;
+        }
+        .chat-header {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #e8eaed;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 14px #2563eb44;
+        }
+        .chat-header img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            margin-right: 22px;
+            object-fit: cover;
+            border: 3px solid #10b981;
+        }
+        .chat-user-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #22223a;
+        }
+        .status-online {
+            font-size: 14px;
+            color: #10b981;
+            font-weight: 600;
+        }
+        .chat-messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 30px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 100px 40px;
+            color: #999;
+        }
+        .empty-state h3 {
+            font-size: 26px;
+            margin-bottom: 14px;
+            color: #666;
+            font-weight: 700;
+        }
+        .message {
+            display: flex;
+            margin-bottom: 18px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {opacity: 0; transform: translateY(12px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        .message.sent {
+            justify-content: flex-end;
+        }
+        .message.received {
+            justify-content: flex-start;
+        }
+        .message-content {
+            max-width: 60%;
+            padding: 18px 22px;
+            border-radius: 22px;
+            word-wrap: break-word;
+            font-weight: 500;
+        }
+        .message.sent .message-content {
+            background: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
+            color: white;
+            border-bottom-right-radius: 8px;
+        }
+        .message.received .message-content {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 8px;
+            color: #22223a;
+        }
+        .message-content p {
+            margin: 0 0 6px 0;
+            line-height: 1.48;
+            font-weight: 500;
+        }
+        .message-time {
+            font-size: 12px;
+            opacity: 0.72;
+            font-weight: 500;
+        }
+        .chat-input-container {
+            padding: 18px 24px;
+            background: white;
+            border-top: 1px solid #e8eaed;
+            display: flex;
+            gap: 18px;
+            align-items: flex-end;
+        }
+        .chat-input-container textarea {
+            flex: 1;
+            padding: 14px 20px;
+            border: 1px solid #ced4da;
+            border-radius: 22px;
+            resize: none;
+            font-family: inherit;
+            font-size: 16px;
+            outline: none;
+            box-shadow: inset 0px 2px 5px rgb(0 0 0 / 0.05);
+            transition: border-color 0.3s ease;
+        }
+        .chat-input-container textarea::placeholder {
+            font-weight: 500;
+            font-size: 15px;
+            color: #9b9b9b;
+        }
+        .chat-input-container textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgb(37 99 235 / 15%);
+        }
+        .chat-input-container button {
+            padding: 14px 26px;
+            background: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 22px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.35s ease;
+        }
+        .chat-input-container button:hover {
+            box-shadow: 0 7px 24px rgba(16, 185, 129, 0.45);
+            transform: translateY(-2px);
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 14px;
+            padding: 30px 28px;
+            width: 100%;
+            max-width: 540px;
+            box-shadow: 0 12px 40px rgb(0 0 0 / 0.15);
+            box-sizing: border-box;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            font-weight: 700;
+            font-size: 24px;
+            color: #22223a;
+        }
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            font-size: 16px;
+            padding: 12px 18px;
+            margin: 15px 0 25px 0;
+            border-radius: 14px;
+            border: 1px solid #d7d7d7;
+            box-sizing: border-box;
+            font-family: inherit;
+            resize: none;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 22px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            border: none;
+            border-radius: 14px;
+            padding: 14px 20px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.35s all ease;
+        }
+        .btn-primary-modal {
+            background: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
+            color: white;
+        }
+        .btn-primary-modal:hover {
+            filter: brightness(95%);
+        }
+        .btn-secondary-modal {
+            background: #f7f7f7;
+            color: #aaa;
+        }
+        .btn-secondary-modal:hover {
+            filter: brightness(85%);
+        }
+
+        .footer {
+            background: #2563eb;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            margin-top: 48px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 -3px 14px #10b98144;
+        }
+        .footer p {
+            margin: 6px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">CoachMePlay</a>
+            <ul class="navbar-menu">
+                <li><a href="/coach/dashboard">Dashboard</a></li>
+                <li><a href="/coach/profile">Profile</a></li>
+                <li><a href="/messages" class="active">Messages</a></li>
+                <li class="notification-wrapper">
+                    <a href="#" id="notificationBell" class="notification-bell">Notifications<span id="notificationBadge" class="notification-badge">0</span></a>
+                    <div id="notificationDropdown" class="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <a href="#" onclick="markAllAsRead(); return false;" class="mark-all-read">Mark all read</a>
+                        </div>
+                        <div id="notificationList" class="notification-list">
+                            <div class="notification-item empty">Loading...</div>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="messages-container">
+            <!-- Sidebar -->
+            <div class="conversations-sidebar">
+                <div class="sidebar-header">
+                    <h2>💬 Messages</h2>
+                    <button class="new-msg-btn" onclick="showNewMessageModal()">+ New</button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchConversations" placeholder="🔍 Search...">
+                </div>
+                <div class="conversations-list" id="conversationsList">
+                    <p class="loading">Loading...</p>
+                </div>
+            </div>
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="chat-header" id="chatHeader" style="display: none;">
+                    <img src="{{ url_for('static', filename='images/default-avatar.png') }}" id="chatUserAvatar" alt="User">
+                    <div class="chat-user-info">
+                        <h3 id="chatUserName">Select a conversation</h3>
+                        <span id="chatUserStatus" class="status-online">● Online</span>
+                    </div>
+                </div>
+                <div class="chat-messages-container" id="chatMessages">
+                    <div class="empty-state">
+                        <h3>💬 Welcome to Messages</h3>
+                        <p>Select a conversation or start a new one</p>
+                    </div>
+                </div>
+                <div class="chat-input-container" id="chatInput" style="display: none;">
+                    <textarea id="messageInput" placeholder="Type your message..." rows="1"></textarea>
+                    <button id="sendMessageBtn">Send 📤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Message Modal -->
+    <div id="newMessageModal" class="modal">
+        <div class="modal-content">
+            <h2>Start New Conversation</h2>
+            <select id="newMessageUser">
+                <option value="">Select a user...</option>
+            </select>
+            <textarea id="newMessageText" placeholder="Type your message..." rows="4"></textarea>
+            <div class="modal-buttons">
+                <button class="btn-primary-modal" onclick="sendNewMessage()">Send Message</button>
+                <button class="btn-secondary-modal" onclick="closeNewMessageModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/messages.js') }}"></script>
+
+    <script>
+        checkAuth();
+        const userType = localStorage.getItem('user_type');
+    </script>
+    <footer class="footer">
+        &copy; 2025 CoachMePlay. All rights reserved.
+    </footer>
+</body>
+</html>

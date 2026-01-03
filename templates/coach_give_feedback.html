@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Give Feedback - CoachMePlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: #f0f4f8;
+            color: #22223a;
+        }
+        .navbar {
+            background: #2563eb;
+            box-shadow: 0 3px 16px rgba(37,99,235,0.12);
+            padding: 15px 0;
+        }
+        .navbar .container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .navbar-menu {
+            list-style: none;
+            display: flex;
+            gap: 18px;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-menu a {
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.16s, color 0.16s;
+        }
+        .navbar-menu a:hover, .navbar-menu a.active {
+            background: #10b981;
+            color: #fff;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 26px 20px;
+        }
+        .welcome {
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+            padding: 38px 34px 32px;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px #2563eb44;
+            color: white;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .welcome h1 {
+            margin: 0 0 10px;
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .welcome p {
+            margin: 0;
+            font-weight: 400;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .athletes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+            gap: 22px;
+            margin-bottom: 48px;
+        }
+        .athlete-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 26px 22px;
+            box-shadow: 0 6px 22px rgba(37,99,235,0.09);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .athlete-card:hover {
+            background: #e0f7f2;
+            box-shadow: 0 16px 38px #10b98133;
+            transform: translateY(-5px);
+        }
+        .athlete-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 18px;
+            object-fit: cover;
+            border: 3px solid #2563eb;
+        }
+        .athlete-name {
+            font-weight: 700;
+            color: #22223a;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+        .athlete-email {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .feedback-btn {
+            padding: 12px 24px;
+            font-weight: 700;
+            border-radius: 26px;
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .feedback-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px #10b98188;
+        }
+        .history-section {
+            margin-top: 40px;
+        }
+        .history-section h2 {
+            font-size: 2rem;
+            color: #2563eb;
+            margin-bottom: 28px;
+        }
+        .feedback-history-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 6px 22px rgba(37,99,235,0.09);
+            transition: box-shadow 0.3s ease;
+            cursor: default;
+        }
+        .feedback-history-card:hover {
+            box-shadow: 0 16px 38px #10b98144;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .history-athlete {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .history-athlete strong {
+            font-size: 17px;
+            color: #22223a;
+            font-weight: 700;
+        }
+        .history-athlete span {
+            font-size: 14px;
+            color: #777;
+        }
+        .delete-btn {
+            padding: 10px 16px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            margin-left: 8px;
+        }
+        .delete-btn:hover {
+            background: #b91c1c;
+            transform: scale(1.05);
+        }
+        .rating-input {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .rating-option {
+            display: flex;
+            align-items: center;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .rating-option:hover {
+            border-color: #2563eb;
+            background: #f0f7ff;
+        }
+        .rating-option input[type="radio"] {
+            margin-right: 16px;
+            cursor: pointer;
+        }
+        .rating-option input[type="radio"]:checked + span {
+            color: #2563eb;
+        }
+        .loading {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 16px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 75px 20px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 6px 22px rgba(37,99,235,0.06);
+        }
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .empty-state p {
+            color: #999;
+            font-size: 15px;
+            margin: 0;
+        }
+        @media (max-width: 768px) {
+            .athletes-grid {
+                grid-template-columns: 1fr;
+            }
+            .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+
+        .footer {
+            background: #2563eb;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            margin-top: 48px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 -3px 14px #10b98144;
+        }
+        .footer p {
+            margin: 6px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <a href="/" class="navbar-brand">CoachMePlay</a>
+        <ul class="navbar-menu">
+            <li><a href="/coach/dashboard">Dashboard</a></li>
+            <li><a href="/coach/give-feedback" class="active">Give Feedback</a></li>
+            <li class="notification-wrapper">
+                <a href="#" id="notificationBell" class="notification-bell">Notifications<span id="notificationBadge" class="notification-badge">0</span></a>
+                <div id="notificationDropdown" class="notification-dropdown">
+                    <div class="notification-header">
+                        <h4>Notifications</h4>
+                        <a href="#" onclick="markAllAsRead(); return false;" class="mark-all-read">Mark all read</a>
+                    </div>
+                    <div id="notificationList" class="notification-list">
+                        <div class="notification-item empty">Loading...</div>
+                    </div>
+                </div>
+            </li>
+            <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="dashboard">
+    <div class="welcome">
+        <h1>💬 Give Feedback to Athletes</h1>
+        <p>Provide performance feedback and guidance to help your athletes improve</p>
+    </div>
+
+    <div class="athletes-grid" id="athletesGrid">
+        <p class="loading">Loading athletes...</p>
+    </div>
+
+    <div class="history-section">
+        <h2>📋 Feedback History</h2>
+        <div id="historyContainer">
+            <p class="loading">Loading feedback history...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; overflow-y: auto; padding: 20px;">
+    <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0; color: #2563eb;">Give Feedback</h2>
+            <button onclick="closeFeedbackModal()" style="background: none; border: none; font-size: 32px; cursor: pointer; color: #999; line-height: 1;">×</button>
+        </div>
+        <h3 id="athleteName" style="color:#10b981; margin-bottom: 25px;"></h3>
+
+        <form id="feedbackForm">
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #333;">Performance Rating *</label>
+                <div class="rating-input">
+                    <label class="rating-option">
+                        <input type="radio" name="rating" value="5" required>
+                        <span>⭐⭐⭐⭐⭐ Excellent</span>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="rating" value="4">
+                        <span>⭐⭐⭐⭐ Good</span>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="rating" value="3">
+                        <span>⭐⭐⭐ Average</span>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="rating" value="2">
+                        <span>⭐⭐ Below Average</span>
+                    </label>
+                    <label class="rating-option">
+                        <input type="radio" name="rating" value="1">
+                        <span>⭐ Needs Improvement</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Feedback *</label>
+                <textarea id="feedbackText" required rows="5" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-family: inherit; resize: vertical;" placeholder="Provide detailed feedback about the athlete's performance, progress, and areas of improvement..."></textarea>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Focus Areas</label>
+                <input type="text" id="focusAreas" style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px;" placeholder="e.g., Cardio, Strength training, Flexibility" />
+                <small style="color: #999; font-size: 12px;">Separate with commas</small>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Strengths</label>
+                <input type="text" id="strengths" style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px;" placeholder="e.g., Good discipline, Consistent attendance, Strong motivation" />
+                <small style="color: #999; font-size: 12px;">Separate with commas</small>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Improvements Needed</label>
+                <input type="text" id="improvements" style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px;" placeholder="e.g., Better time management, More protein intake, Hydration" />
+                <small style="color: #999; font-size: 12px;">Separate with commas</small>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="closeFeedbackModal()" style="flex: 1; padding: 12px; border: 1px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Cancel</button>
+                <button type="submit" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Submit Feedback</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Feedback Detail Modal -->
+<div id="feedbackDetailModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; overflow-y: auto; padding: 20px;">
+    <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative;">
+        <button onclick="document.getElementById('feedbackDetailModal').style.display='none';" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 32px; cursor: pointer; color: #999; line-height: 1;">×</button>
+        <div id="feedbackDetailContent"></div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+<script>
+    // Global variables to hold user, coach, and selected athlete IDs
+    let userId, coachId, selectedAthleteId;
+
+    // Initialize the application
+    async function init() {
+        try {
+            const user = await API_HELPER.getCurrentUser();
+            userId = user.user_id;
+            coachId = API_HELPER.getCoachIdFromUser(user);
+            await loadAthletes();
+            await loadHistory();
+        } catch (error) {
+            console.error('Error during initialization:', error);
+            window.location.href = '/login';
+        }
+    }
+
+    // Load and display athletes
+    async function loadAthletes() {
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`${API_URL}/feedback/coach/${coachId}/athletes`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                displayAthletes(data.athletes);
+            } else {
+                document.getElementById('athletesGrid').innerHTML = '<p class="loading">Error loading athletes</p>';
+            }
+        } catch (error) {
+            console.error('Error loading athletes:', error);
+            document.getElementById('athletesGrid').innerHTML = '<p class="loading">Error loading athletes</p>';
+        }
+    }
+
+    // Display athlete cards
+    function displayAthletes(athletes) {
+        const grid = document.getElementById('athletesGrid');
+        if (!athletes || athletes.length === 0) {
+            grid.innerHTML = `
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <div style="font-size: 60px; margin-bottom: 20px;">👥</div>
+                    <h3>No athletes found</h3>
+                    <p>Accept athlete requests to start giving feedback</p>
+                </div>
+            `;
+            return;
+        }
+        grid.innerHTML = athletes.map(a => `
+            <div class="athlete-card" onclick="openFeedbackModal(${a.athlete_id}, '${escapeHtml(a.full_name)}')">
+                <img src="${a.profile_picture || 'https://via.placeholder.com/80'}" class="athlete-avatar" alt="${escapeHtml(a.full_name)}" />
+                <div class="athlete-name">${escapeHtml(a.full_name)}</div>
+                <div class="athlete-email">${a.email}</div>
+                <button class="feedback-btn" onclick="event.stopPropagation(); openFeedbackModal(${a.athlete_id}, '${escapeHtml(a.full_name)}')">Give Feedback</button>
+            </div>
+        `).join('');
+    }
+
+    // Escape quotes for safe HTML insertion
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    // Open the create feedback modal
+    function openFeedbackModal(athleteId, athleteName) {
+        selectedAthleteId = athleteId;
+        document.getElementById('athleteName').textContent = `Feedback for ${athleteName}`;
+        document.getElementById('feedbackModal').style.display = 'flex';
+    }
+
+    // Close the create feedback modal
+    function closeFeedbackModal() {
+        document.getElementById('feedbackModal').style.display = 'none';
+        document.getElementById('feedbackForm').reset();
+    }
+
+    // Load and display feedback history
+    async function loadHistory() {
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`${API_URL}/feedback/coach/${coachId}/given`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                window.feedbacks = data.feedbacks || [];
+                displayHistory(window.feedbacks);
+            } else {
+                document.getElementById('historyContainer').innerHTML = '<p style="text-align:center; color:#999;">Error loading feedback history</p>';
+            }
+        } catch (error) {
+            console.error('Error loading history:', error);
+            document.getElementById('historyContainer').innerHTML = '<p style="text-align:center; color:#999;">Error loading feedback history</p>';
+        }
+    }
+
+    // Display feedback history cards
+    function displayHistory(feedbacks) {
+        const container = document.getElementById('historyContainer');
+        if (!feedbacks || feedbacks.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size:50px; margin-bottom:15px;">📝</div>
+                    <p style="color:#999;">No feedback given yet</p>
+                </div>
+            `;
+            return;
+        }
+        container.innerHTML = feedbacks.map(f => `
+            <div class="feedback-history-card">
+                <div class="history-header">
+                    <div class="history-athlete">
+                        <strong>${f.athlete_name}</strong>
+                        <span>📅 ${new Date(f.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })}</span>
+                        ${f.performance_rating ? `<span style="color:#fbbf24; font-size:16px;">${'⭐'.repeat(f.performance_rating)}</span>` : ''}
+                    </div>
+                    <button class="delete-btn" data-feedback-view="${f.feedback_id}">View</button>
+                    <button class="delete-btn" style="background:#dc2626;" onclick="event.stopPropagation(); deleteFeedback(${f.feedback_id})">Delete</button>
+                </div>
+                <div style="color:#666; line-height:1.6; padding:12px; background:#f8f9fa; border-radius:8px; border-left:4px solid #2563eb;">
+                    ${f.feedback_text}
+                </div>
+                ${f.focus_areas || f.strengths || f.improvements_needed ? `
+                    <div style="margin-top:12px; padding-top:12px; border-top:1px solid #f0f0f0;">
+                        ${f.focus_areas ? `<div style="margin-bottom: 8px;"><strong style="color:#2563eb; font-size:12px;">🎯 FOCUS:</strong> <span style="font-size:13px; color:#666;">${f.focus_areas}</span></div>` : ''}
+                        ${f.strengths ? `<div style="margin-bottom: 8px;"><strong style="color:#10b981; font-size:12px;">💪 STRENGTHS:</strong> <span style="font-size:13px; color:#666;">${f.strengths}</span></div>` : ''}
+                        ${f.improvements_needed ? `<div><strong style="color:#f59e0b; font-size:12px;">📈 IMPROVE:</strong> <span style="font-size:13px; color:#666;">${f.improvements_needed}</span></div>` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    }
+
+    // View feedback details in the modal
+    async function viewFeedbackDetail(feedbackId) {
+        try {
+            const data = await API_HELPER.getFeedbackDetail(feedbackId);
+            const f = data.feedback;
+
+            function starsHtml(rating) {
+                let html = '';
+                for (let i = 1; i <= 5; i++) {
+                    html += `<span style="color:${i <= rating ? '#fbbf24' : '#e5e7eb'};font-size:22px;">★</span>`;
+                }
+                return html;
+            }
+
+            let modalHtml = `
+                <h3 style="margin-top:0;">Feedback Detail</h3>
+                <p><strong>Coach:</strong> ${f.coach_name || ''}</p>
+                <p><strong>Athlete:</strong> ${f.athlete_name || ''}</p>
+                <p><strong>Performance Rating:</strong></p>
+                <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
+                    <div>${starsHtml(f.performance_rating || 0)}</div>
+                    <span style="background:#2563eb;color:white;font-weight:700;border-radius:12px;padding:4px 11px;font-size:18px;">
+                        ${f.performance_rating ? f.performance_rating + '.0' : 'N/A'}
+                    </span>
+                </div>
+                <div style="margin:12px 0;"><strong>Feedback:</strong>
+                    <div style="padding:10px; background:#f8f9fa; border-radius:6px; margin-top:6px; color:#22223a;">
+                        ${f.feedback_text}
+                    </div>
+                </div>
+                ${f.focus_areas ? `
+                    <div style="margin-bottom:12px;">
+                        <strong>Focus Areas:</strong>
+                        <div style="margin-top:4px;color:#2563eb;">${f.focus_areas.split(',').map(s => `<span style="background:#eff6ff;padding:5px 14px;border-radius:14px;margin-right:8px;">${s.trim()}</span>`).join('')}</div>
+                    </div>
+                ` : ''}
+                ${f.strengths ? `
+                    <div style="margin-bottom:12px;">
+                        <strong>Strengths:</strong>
+                        <div style="margin-top:4px;color:#16a34a;">${f.strengths.split(',').map(s => `<span style="background:#dcfce7;padding:5px 14px;border-radius:14px;margin-right:8px;">${s.trim()}</span>`).join('')}</div>
+                    </div>
+                ` : ''}
+                ${f.improvements_needed ? `
+                    <div>
+                        <strong>Improvements Needed:</strong>
+                        <div style="margin-top:4px;color:#b45309;">${f.improvements_needed.split(',').map(s => `<span style="background:#fef3c7;padding:5px 14px;border-radius:14px;margin-right:8px;">${s.trim()}</span>`).join('')}</div>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('feedbackDetailContent').innerHTML = modalHtml;
+            document.getElementById('feedbackDetailModal').style.display = 'flex';
+        } catch (err) {
+            console.error('Error loading feedback detail', err);
+            alert('Error loading feedback detail');
+        }
+    }
+
+    // Delete feedback
+    async function deleteFeedback(feedbackId) {
+        if(!confirm('Are you sure you want to delete this feedback? This action cannot be undone.')) return;
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`${API_URL}/feedback/${feedbackId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if(res.ok){
+                alert('✅ Feedback deleted successfully! 🗑️');
+                loadHistory();
+            } else {
+                alert('❌ Failed to delete feedback');
+            }
+        } catch (error) {
+            console.error('Error deleting feedback:', error);
+            alert('❌ Failed to delete feedback. Please try again.');
+        }
+    }
+
+    // Event listener for feedback detail modal open on "View" button click
+    document.addEventListener('click', async function(e) {
+        const viewButton = e.target.closest('[data-feedback-view]');
+        if (viewButton) {
+            e.stopPropagation();
+            const feedbackId = viewButton.dataset.feedbackView;
+            await viewFeedbackDetail(feedbackId);
+        }
+    });
+
+    // Event listener to close create feedback modal on background click
+    document.getElementById('feedbackModal').addEventListener('click', function(e) {
+        if (e.target === this) closeFeedbackModal();
+    });
+
+    // Feedback form submission handler
+    document.getElementById('feedbackForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        const rating = document.querySelector('input[name="rating"]:checked')?.value;
+        if (!selectedAthleteId) {
+            alert('Please select an athlete before submitting feedback.');
+            return;
+        }
+        try {
+            const res = await fetch(`${API_URL}/feedback/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    coach_id: coachId,
+                    athlete_id: selectedAthleteId,
+                    performance_rating: rating ? parseInt(rating) : null,
+                    feedback_text: document.getElementById('feedbackText').value,
+                    focus_areas: document.getElementById('focusAreas').value || null,
+                    strengths: document.getElementById('strengths').value || null,
+                    improvements_needed: document.getElementById('improvements').value || null
+                })
+            });
+            if (res.ok) {
+                alert('✅ Feedback submitted successfully! 🎉');
+                closeFeedbackModal();
+                loadHistory();
+            } else {
+                const errorData = await res.json();
+                alert('❌ Failed to submit feedback: ' + (errorData.error || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            alert('❌ Failed to submit feedback. Please try again.');
+        }
+    });
+
+    // Initialize app on page load
+    init();
+</script>
+<footer class="footer">
+        &copy; 2025 CoachMePlay. All rights reserved.
+    </footer>
+</body>
+</html>

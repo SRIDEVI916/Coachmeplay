@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Plans - CoachMePlay</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">CoachMePlay</div>
+        <div class="nav-links">
+            <a href="/coach/dashboard">Dashboard</a>
+            <a href="/coach/students">My Students</a>
+            <a href="/coach/workout-plans">Workout Plans</a>
+            <a href="/coach/nutrition" class="active">Nutrition</a>
+            <a href="/coach/analytics">Analytics</a>
+            <a href="/messages">Messages</a>
+            <div class="notification-icon" id="notificationBell">
+                <span>🔔</span>
+                <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+            </div>
+            <a href="#" id="logoutBtn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="page-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Nutrition Plans</h1>
+                    <p>Create and manage meal plans for your athletes</p>
+                </div>
+                <a href="/coach/create-meal-plan" class="btn btn-primary">
+                    🍎 Create Meal Plan
+                </a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-info">
+                    <h3 id="totalPlans">0</h3>
+                    <p>Total Plans</p>
+                </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                    <h3 id="athletesWithPlans">0</h3>
+                    <p>Athletes with Plans</p>
+                </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-info">
+                    <h3 id="avgCalories">0</h3>
+                    <p>Avg Daily Calories</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Meal Plans by Athlete</h2>
+            <div class="coaches-grid" id="plansList">
+                <p class="loading">Loading plans...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/notifications.js"></script>
+    <script>
+        let coachId = null;
+
+        async function getCoachInfo() {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/auth/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const userId = data.user.user_id;
+                
+                const coachResponse = await fetch(`${API_URL}/coach/coach-info/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (coachResponse.ok) {
+                    const coachData = await coachResponse.json();
+                    coachId = coachData.coach_id;
+                    loadAthletes();
+                }
+            }
+        }
+
+        async function loadAthletes() {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/coach/my-athletes/${coachId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                displayAthletes(data.athletes);
+            }
+        }
+
+        function displayAthletes(athletes) {
+            const container = document.getElementById('plansList');
+            
+            if (athletes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Athletes Yet</h3>
+                        <p>Accept coaching requests to create meal plans</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = athletes.map(athlete => `
+                <div class="coach-card">
+                    <h3>${athlete.full_name}</h3>
+                    <div class="coach-info">
+                        <p><span class="info-label">Sport:</span> ${athlete.sport_type || 'N/A'}</p>
+                        <p><span class="info-label">Age:</span> ${athlete.age || 'N/A'}</p>
+                        <p><span class="info-label">Height:</span> ${athlete.height || 'N/A'} cm</p>
+                        <p><span class="info-label">Weight:</span> ${athlete.weight || 'N/A'} kg</p>
+                    </div>
+                    <div class="coach-actions">
+                        <button onclick="calculateNutrition(${athlete.athlete_id})" class="btn btn-secondary">
+                            🧮 Calculate Needs
+                        </button>
+                        <button onclick="createPlanForAthlete(${athlete.athlete_id})" class="btn btn-primary">
+                            🍎 Create Plan
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('totalPlans').textContent = athletes.length;
+            document.getElementById('athletesWithPlans').textContent = athletes.length;
+        }
+
+        async function calculateNutrition(athleteId) {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/coach/calculate-nutrition/${athleteId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert(`Nutrition Needs:\n\n` +
+                    `BMI: ${data.bmi}\n` +
+                    `Daily Calories: ${data.daily_calories}\n` +
+                    `Protein: ${data.protein_grams}g\n` +
+                    `Carbs: ${data.carbs_grams}g\n` +
+                    `Fats: ${data.fats_grams}g`
+                );
+            }
+        }
+
+        function createPlanForAthlete(athleteId) {
+            localStorage.setItem('selected_athlete_id', athleteId);
+            window.location.href = '/coach/create-meal-plan';
+        }
+
+        getCoachInfo();
+    </script>
+</body>
+</html>

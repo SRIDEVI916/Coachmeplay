@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Students - CoachMePlay</title>
+    <title>Workout Plans - CoachMePlay</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>body {
+    <style>
+        body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
             background: #f0f4f8;
@@ -16,7 +17,7 @@
             max-width: 1200px;
             margin: 0 auto;
         }
-         .navbar {
+        .navbar {
             background: #2563eb;
             box-shadow: 0 3px 16px rgba(37,99,235,0.12);
             padding: 15px 0;
@@ -78,25 +79,24 @@
             padding: 30px;
             border-radius: 8px;
             margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-
         .page-header h1 {
             margin: 0 0 10px 0;
             font-size: 32px;
         }
-
         .page-header p {
             margin: 0;
             opacity: 0.9;
         }
-
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
-
         .stat-card {
             background: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
             color: white;
@@ -107,48 +107,40 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: transform 0.3s;
         }
-
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-
         .stat-icon {
             font-size: 48px;
             margin-right: 20px;
         }
-
         .stat-info h3 {
             margin: 0 0 5px 0;
             font-size: 36px;
             font-weight: bold;
         }
-
         .stat-info p {
             margin: 0;
             opacity: 0.9;
         }
-
         .content-section {
             background: white;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-
         .content-section h2 {
             color: #10b981;
             margin-top: 0;
             margin-bottom: 25px;
             font-size: 24px;
         }
-
         .coaches-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
-
         .coach-card {
             background: white;
             border: 1px solid #e0e0e0;
@@ -157,78 +149,58 @@
             text-align: center;
             transition: all 0.3s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
         }
-
         .coach-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
-
-        .coach-card img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border: 3px solid #10b981;
-        }
-
         .coach-card h3 {
             margin: 0 0 15px 0;
             color: #333;
             font-size: 20px;
         }
-
         .coach-info {
             text-align: left;
             margin-bottom: 15px;
         }
-
         .coach-info p {
             margin: 8px 0;
             color: #666;
             font-size: 14px;
         }
-
         .info-label {
             font-weight: 600;
             color: #10b981;
         }
-
         .coach-actions {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-
         .coach-actions .btn {
             width: 100%;
         }
-
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #666;
         }
-
         .empty-state h3 {
             font-size: 24px;
             margin-bottom: 10px;
             color: #333;
         }
-
         .empty-state p {
             margin-bottom: 20px;
             color: #999;
         }
-
         .loading {
             text-align: center;
             padding: 40px;
             color: #999;
             font-size: 16px;
         }
-
         .btn {
             padding: 10px 20px;
             border: none;
@@ -240,44 +212,87 @@
             display: inline-block;
             text-align: center;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
             color: white;
         }
-
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
         }
-
         .btn-secondary {
             background: #6c757d;
             color: white;
         }
-
         .btn-secondary:hover {
             background: #5a6268;
         }
-
         .btn-outline {
             background: white;
             color: #10b981;
             border: 2px solid #10b981;
         }
-
         .btn-outline:hover {
             background: #10b981;
             color: white;
         }
-
-        .btn-success {
+        .template-badge {
             background: #10b981;
             color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            position: absolute;
+            top: 15px;
+            right: 15px;
         }
-
-        .btn-success:hover {
-            background: #059669;
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .modal-content p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .modal-content select:focus {
+            border-color: #10b981;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
         }
     </style>
 </head>
@@ -288,13 +303,11 @@
             <ul class="navbar-menu">
                 <li><a href="/coach/dashboard">Dashboard</a></li>
                 <li><a href="/coach/profile">Profile</a></li>
-                <li><a href="/coach/analytics">Analytics</a></li>
-                <li><a href="/coach/students" class="active">My Students</a></li>
-                <li><a href="/coach/requests">Requests</a></li>
+                <li><a href="/coach/workout-plans" class="active">Workout Plans</a></li>
                 <li><a href="/messages">Messages</a></li>
                 <li class="notification-wrapper">
                     <a href="#" id="notificationBell" class="notification-bell">
-                        🔔
+                        Notifications
                         <span id="notificationBadge" class="notification-badge">0</span>
                     </a>
                     <div id="notificationDropdown" class="notification-dropdown">
@@ -314,31 +327,64 @@
 
     <div class="dashboard">
         <div class="page-header">
-            <h1>My Students 👥</h1>
-            <p>Manage and communicate with your athletes</p>
+            <div>
+                <h1>Workout Plans 📋</h1>
+                <p>Create and manage training programs for your athletes</p>
+            </div>
+            <a href="/coach/create-workout" class="btn btn-primary">
+                ✨ Create New Plan
+            </a>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">👥</div>
+                <div class="stat-icon">📋</div>
                 <div class="stat-info">
-                    <h3 id="totalStudents">0</h3>
-                    <p>Total Students</p>
+                    <h3 id="totalPlans">0</h3>
+                    <p>Total Plans</p>
                 </div>
             </div>
             <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <div class="stat-icon">⚡</div>
+                <div class="stat-icon">👤</div>
                 <div class="stat-info">
-                    <h3 id="activeStudents">0</h3>
-                    <p>Active This Week</p>
+                    <h3 id="assignedPlans">0</h3>
+                    <p>Assigned Plans</p>
+                </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-info">
+                    <h3 id="templatePlans">0</h3>
+                    <p>Templates</p>
                 </div>
             </div>
         </div>
 
         <div class="content-section">
-            <h2>Your Students</h2>
-            <div class="coaches-grid" id="studentsList">
-                <p class="loading">Loading students...</p>
+            <h2>Your Workout Plans</h2>
+            <div class="coaches-grid" id="plansList">
+                <p class="loading">Loading workout plans...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Plan Modal -->
+    <div id="assignModal" class="modal">
+        <div class="modal-content">
+            <h2>Assign Workout Plan</h2>
+            <p>Select an athlete to assign this workout plan to:</p>
+            
+            <select id="athleteSelect">
+                <option value="">Select an athlete...</option>
+            </select>
+            
+            <div class="modal-buttons">
+                <button onclick="confirmAssign()" class="btn btn-primary" style="flex: 1;">
+                    Assign Plan
+                </button>
+                <button onclick="closeAssignModal()" class="btn btn-outline" style="flex: 1;">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -357,27 +403,24 @@
         }
 
         let coachId = null;
+        let selectedPlanId = null;
 
         async function getCoachInfo() {
             const token = localStorage.getItem('token');
-            
             try {
                 const response = await fetch(`${API_URL}/auth/me`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
                 if (response.ok) {
                     const data = await response.json();
                     const userId = data.user.user_id;
-                    
                     const coachResponse = await fetch(`${API_URL}/coach/coach-info/${userId}`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    
                     if (coachResponse.ok) {
                         const coachData = await coachResponse.json();
                         coachId = coachData.coach_id;
-                        loadStudents();
+                        loadWorkoutPlans();
                     }
                 }
             } catch (error) {
@@ -385,88 +428,130 @@
             }
         }
 
-        async function loadStudents() {
+        async function loadWorkoutPlans() {
             const token = localStorage.getItem('token');
-            
             try {
-                const response = await fetch(`${API_URL}/coach/my-athletes/${coachId}`, {
+                const response = await fetch(`${API_URL}/coach/workout-plans/${coachId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
                 if (response.ok) {
                     const data = await response.json();
-                    displayStudents(data.athletes);
-                    updateStats(data.athletes);
+                    displayPlans(data.plans);
+                    updateStats(data.plans);
                 }
             } catch (error) {
-                console.error('Error loading students:', error);
+                console.error('Error loading workout plans:', error);
             }
         }
 
-        function displayStudents(students) {
-            const container = document.getElementById('studentsList');
-            
-            if (students.length === 0) {
+        function displayPlans(plans) {
+            const container = document.getElementById('plansList');
+            if (plans.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <h3>No Students Yet</h3>
-                        <p>Accept coaching requests to see your students here</p>
-                        <a href="/coach/requests" class="btn btn-primary">View Requests</a>
+                        <h3>No Workout Plans Yet</h3>
+                        <p>Create your first workout plan to get started</p>
+                        <a href="/coach/create-workout" class="btn btn-primary">Create Plan</a>
                     </div>
                 `;
                 return;
             }
-
-            container.innerHTML = students.map(student => `
+            container.innerHTML = plans.map(plan => `
                 <div class="coach-card">
-                    <img src="${student.profile_picture || '/static/images/default-avatar.png'}" 
-                         alt="${student.full_name}" 
-                         onerror="this.src='/static/images/default-avatar.png'">
-                    <h3>${student.full_name}</h3>
+                    ${plan.is_template ? '<span class="template-badge">Template</span>' : ''}
+                    <h3>${plan.plan_name}</h3>
                     <div class="coach-info">
-                        <p><span class="info-label">Sport:</span> ${student.sport_type || 'Not specified'}</p>
-                        <p><span class="info-label">Level:</span> ${student.skill_level || 'Not specified'}</p>
-                        <p><span class="info-label">Age:</span> ${student.age || 'Not specified'}</p>
+                        <p><span class="info-label">Duration:</span> ${plan.duration_weeks || 'N/A'} weeks</p>
+                        <p><span class="info-label">Level:</span> ${plan.difficulty_level || 'N/A'}</p>
+                        <p><span class="info-label">Sessions:</span> ${plan.session_count || 0}</p>
+                        <p><span class="info-label">Assigned to:</span> ${plan.athlete_name || 'No one yet'}</p>
+                        <p style="color: #666; font-size: 13px; margin-top: 10px;">${plan.description || 'No description'}</p>
                     </div>
                     <div class="coach-actions">
-                        <button onclick="messageAthlete(${student.user_id}, '${student.full_name}', '${student.profile_picture || ''}')" 
-                                class="btn btn-primary">
-                            💬 Message
-                        </button>
-                        <button onclick="assignTask(${student.athlete_id})" class="btn btn-secondary">
-                            📋 Assign Task
-                        </button>
-                        <button onclick="viewDetails(${student.athlete_id})" class="btn btn-outline">
-                            👁️ View Profile
-                        </button>
+                        ${!plan.athlete_id ? `<button onclick="assignPlan(${plan.plan_id})" class="btn btn-secondary">
+                            📤 Assign to Athlete
+                        </button>` : ''}
                     </div>
                 </div>
             `).join('');
         }
 
-        function updateStats(students) {
-            document.getElementById('totalStudents').textContent = students.length;
-            document.getElementById('activeStudents').textContent = students.length;
+        function updateStats(plans) {
+            document.getElementById('totalPlans').textContent = plans.length;
+            document.getElementById('assignedPlans').textContent = plans.filter(p => p.athlete_id).length;
+            document.getElementById('templatePlans').textContent = plans.filter(p => p.is_template).length;
         }
 
-        function messageAthlete(userId, userName, userAvatar) {
-            localStorage.setItem('messageUser', JSON.stringify({
-                userId: userId,
-                userName: userName,
-                userAvatar: userAvatar || '/static/images/default-avatar.png'
-            }));
-            window.location.href = '/messages';
+        // Show assign modal
+        async function assignPlan(planId) {
+            selectedPlanId = planId;
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`${API_URL}/coach/my-athletes/${coachId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const select = document.getElementById('athleteSelect');
+                    select.innerHTML = '<option value="">Select an athlete...</option>' +
+                        data.athletes.map(a => `<option value="${a.athlete_id}">${a.full_name}</option>`).join('');
+                    document.getElementById('assignModal').style.display = 'flex';
+                } else {
+                    alert('Failed to load athletes');
+                }
+            } catch (error) {
+                console.error('Error loading athletes:', error);
+                alert('Error loading athletes');
+            }
         }
 
-        function assignTask(athleteId) {
-            localStorage.setItem('selectedAthleteId', athleteId);
-            window.location.href = '/coach/assign-task';
+        // Close assign modal
+        function closeAssignModal() {
+            document.getElementById('assignModal').style.display = 'none';
+            selectedPlanId = null;
         }
 
-        function viewDetails(athleteId) {
-            // Use the same URL pattern as in requests.html for consistency
-            window.location.href = `/coach/athlete-detail?athlete_id=${athleteId}`;
+        // Confirm assignment
+        async function confirmAssign() {
+            const athleteId = document.getElementById('athleteSelect').value;
+            if (!athleteId) {
+                alert('Please select an athlete');
+                return;
+            }
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`${API_URL}/coach/workout-plans/duplicate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        plan_id: selectedPlanId,
+                        athlete_id: athleteId,
+                        coach_id: coachId
+                    })
+                });
+                if (response.ok) {
+                    alert('Workout plan assigned successfully!');
+                    closeAssignModal();
+                    loadWorkoutPlans();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + (error.error || 'Failed to assign plan'));
+                }
+            } catch (error) {
+                console.error('Error assigning plan:', error);
+                alert('Error assigning plan');
+            }
         }
+
+        // Close modal when clicking outside
+        document.getElementById('assignModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAssignModal();
+            }
+        });
 
         getCoachInfo();
     </script>

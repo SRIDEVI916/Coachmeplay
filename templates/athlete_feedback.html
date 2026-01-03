@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>My Feedback - CoachMePlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            color: #22223a;
+        }
+        .navbar {
+            background: #2563eb;
+            box-shadow: 0 3px 16px rgba(37,99,235,0.12);
+            padding: 15px 0;
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .navbar-menu {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-menu a {
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            transition: background 0.16s, color 0.16s;
+        }
+        .navbar-menu a:hover {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .dashboard {
+            padding: 26px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .welcome {
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+            color: white;
+            padding: 38px 34px 32px 34px;
+            border-radius: 14px;
+            margin-bottom: 38px;
+            box-shadow: 0 4px 24px #2563eb24;
+        }
+        .welcome h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .welcome p {
+            font-size: 1.16rem;
+            font-weight: 400;
+            margin: 0;
+        }
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+            gap: 26px;
+            margin-bottom: 34px;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 28px 10px 22px 10px;
+            border-radius: 14px;
+            box-shadow: 0 6px 22px rgba(37,99,235,0.09);
+            text-align: center;
+            transition: transform 0.19s, box-shadow 0.19s;
+        }
+        .stat-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 13px 38px #10b98133;
+        }
+        .stat-number {
+            font-size: 2.1rem;
+            font-weight: bold;
+            color: #10b981;
+            margin: 15px 0 8px 0;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .feedback-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 28px 22px 22px 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 6px 22px 0 rgba(37,99,235,.09);
+            transition: transform 0.19s, box-shadow 0.19s;
+        }
+        .feedback-card:hover {
+            box-shadow: 0 16px 38px #10b98133;
+            transform: translateY(-4px) scale(1.015);
+        }
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+            padding-bottom: 11px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .coach-avatar {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #2563eb;
+        }
+        .coach-info h3 {
+            margin: 0 0 5px 0;
+            color: #22223a;
+            font-size: 17px;
+            font-weight: 700;
+        }
+        .coach-spec {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+        .rating {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+        .star {
+            color: #fbbf24;
+            font-size: 17px;
+        }
+        .star.empty {
+            color: #e5e7eb;
+        }
+        .rating-number {
+            margin-left: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+        }
+        .feedback-date {
+            margin-left: auto;
+            color: #999;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .view-btn {
+            padding: 7px 24px;
+            border-radius: 22px;
+            background: linear-gradient(90deg, #2563eb 60%, #10b981 100%);
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            margin-left: 12px;
+            cursor: pointer;
+            box-shadow: 0 3px 14px #2563eb1a;
+            transition: background 0.16s, box-shadow 0.15s, transform 0.13s;
+            outline: none;
+            letter-spacing: 1px;
+        }
+        .view-btn:hover, .view-btn:focus {
+            background: linear-gradient(90deg, #10b981 60%, #2563eb 100%);
+            box-shadow: 0 7px 18px #10b98133;
+            transform: translateY(-2px) scale(1.04);
+            color: #fff;
+        }
+
+        .feedback-section {
+            margin-bottom: 13px;
+        }
+        .feedback-label {
+            font-weight: 600;
+            color: #2563eb;
+            font-size: 13px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .feedback-text {
+            color: #22223a;
+            line-height: 1.8;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 18px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 4px;
+            transition: background 0.17s, color 0.17s, transform 0.15s;
+        }
+        .badge:hover {
+            background: #10b981;
+            color: #fff;
+            transform: scale(1.07);
+        }
+        .badge.strength {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        .badge.improve {
+            background: #fef3c7;
+            color: #ca8a04;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 75px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(37,99,235,0.06);
+        }
+        .empty-state h2 {
+            color: #2563eb;
+            margin-bottom: 14px;
+        }
+        .empty-state p {
+            color: #999;
+            font-size: 16px;
+        }
+        .loading {
+            text-align: center;
+            color: #999;
+            padding: 35px;
+        }
+        @media (max-width: 900px) {
+            .stats-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 700px) {
+            .feedback-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .feedback-date {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        .footer {
+            background: #2563eb;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            margin-top: 48px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 -3px 14px #10b98144;
+        }
+        .footer p {
+            margin: 6px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">CoachMePlay</a>
+            <ul class="navbar-menu">
+                <li><a href="/athlete/dashboard">Dashboard</a></li>
+                <li><a href="/athlete/profile">Profile</a></li>
+                <li class="notification-wrapper">
+                    <a href="#" id="notificationBell" class="notification-bell">
+                        Notifications
+                        <span id="notificationBadge" class="notification-badge">0</span>
+                    </a>
+                    <div id="notificationDropdown" class="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <a href="#" onclick="markAllAsRead(); return false;" class="mark-all-read">Mark all read</a>
+                        </div>
+                        <div id="notificationList" class="notification-list">
+                            <div class="notification-item empty">Loading...</div>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="dashboard">
+        <div class="welcome">
+            <h1>💬 Coach Feedback</h1>
+            <p>Performance reviews and improvement suggestions from your coaches</p>
+        </div>
+        <script>
+            document.addEventListener('click', async function(e) {
+                const viewButton = e.target.closest('[data-feedback-view]');
+                if (viewButton) {
+                    e.stopPropagation();
+                    const feedbackId = viewButton.dataset.feedbackView;
+                    await viewFeedbackDetail(feedbackId);
+                }
+            });
+        </script>
+        <div class="stats-section">
+            <div class="stat-card">
+                <div style="font-size: 40px;">📋</div>
+                <div class="stat-number" id="totalFeedback">0</div>
+                <div class="stat-label">Total Feedbacks</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 40px;">⭐</div>
+                <div class="stat-number" id="avgRating">0.0</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 40px;">💪</div>
+                <div class="stat-number" id="strengthCount">0</div>
+                <div class="stat-label">Strengths Identified</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 40px;">📈</div>
+                <div class="stat-number" id="improvementCount">0</div>
+                <div class="stat-label">Areas to Improve</div>
+            </div>
+        </div>
+        <div id="feedbackContainer">
+            <p class="loading">Loading feedback...</p>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script>
+        let userId;
+        async function init() {
+            try {
+                const user = await API_HELPER.getCurrentUser();
+                userId = user.user_id;
+                loadFeedback();
+            } catch (error) {
+                console.error('Error initializing:', error);
+                window.location.href = '/login';
+            }
+        }
+        async function loadFeedback() {
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_URL}/feedback/athlete/${userId}/received`, { 
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    displayFeedback(data);
+                } else {
+                    document.getElementById('feedbackContainer').innerHTML = '<p class="loading">Error loading feedback</p>';
+                }
+            } catch (error) {
+                console.error('Error loading feedback:', error);
+                document.getElementById('feedbackContainer').innerHTML = '<p class="loading">Error loading feedback</p>';
+            }
+        }
+        function displayFeedback(data) {
+            document.getElementById('totalFeedback').textContent = data.total_count || 0;
+            document.getElementById('avgRating').textContent = (data.avg_rating || 0).toFixed(1);
+            let strengthCount = 0;
+            let improvementCount = 0;
+            data.feedbacks.forEach(f => {
+                if (f.strengths) {
+                    strengthCount += f.strengths.split(',').map(s => s.trim()).filter(Boolean).length;
+                }
+                if (f.improvements_needed) {
+                    improvementCount += f.improvements_needed.split(',').map(i => i.trim()).filter(Boolean).length;
+                }
+            });
+            document.getElementById('strengthCount').textContent = strengthCount;
+            document.getElementById('improvementCount').textContent = improvementCount;
+            const container = document.getElementById('feedbackContainer');
+            if (!data.feedbacks || data.feedbacks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 60px; margin-bottom: 20px;">💬</div>
+                        <h2>No feedback yet</h2>
+                        <p>Your coaches will provide feedback on your performance soon</p>
+                    </div>
+                `;
+                return;
+            }
+            container.innerHTML = data.feedbacks.map(f => `
+                <div class="feedback-card">
+                    <div class="feedback-header">
+                        <img src="${f.coach_image || 'https://via.placeholder.com/60'}" class="coach-avatar" alt="${f.coach_name}">
+                        <div class="coach-info">
+                            <h3>${f.coach_name}</h3>
+                            <div class="coach-spec">${f.specialization || 'Coach'}</div>
+                            ${f.performance_rating ? `
+                                <div class="rating">
+                                    ${generateStars(f.performance_rating)}
+                                    <span class="rating-number">${f.performance_rating}.0</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="feedback-date">
+                            📅 ${new Date(f.created_at).toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric', 
+                                year: 'numeric' 
+                            })}
+                            <button class="view-btn" data-feedback-view="${f.feedback_id}">View</button>
+                        </div>
+                    </div>
+                    <div class="feedback-section">
+                        <div class="feedback-label">📝 Feedback</div>
+                        <div class="feedback-text">${f.feedback_text}</div>
+                    </div>
+                    ${f.focus_areas ? `
+                        <div class="feedback-section">
+                            <div class="feedback-label">🎯 Focus Areas</div>
+                            <div>${f.focus_areas.split(',').map(a => `<span class="badge">${a.trim()}</span>`).join('')}</div>
+                        </div>
+                    ` : ''}
+                    ${f.strengths ? `
+                        <div class="feedback-section">
+                            <div class="feedback-label">💪 Strengths</div>
+                            <div>${f.strengths.split(',').map(s => `<span class="badge strength">${s.trim()}</span>`).join('')}</div>
+                        </div>
+                    ` : ''}
+                    ${f.improvements_needed ? `
+                        <div class="feedback-section">
+                            <div class="feedback-label">📈 Improvements Needed</div>
+                            <div>${f.improvements_needed.split(',').map(i => `<span class="badge improve">${i.trim()}</span>`).join('')}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<span class="star ${i <= rating ? '' : 'empty'}">★</span>`;
+            }
+            return stars;
+        }
+        init();
+    </script>
+    <!-- Feedback Detail Modal -->
+    <div id="feedbackDetailModal" style="display:none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index:10000; align-items:center; justify-content:center;">
+        <div style="background:white; padding:20px; border-radius:8px; width:90%; max-width:700px; max-height:80vh; overflow:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h2 style="margin:0;">Feedback Detail</h2>
+                <button onclick="document.getElementById('feedbackDetailModal').style.display='none'" style="background:none;border:none;font-size:28px;cursor:pointer;">×</button>
+            </div>
+            <div id="feedbackDetailContent"></div>
+        </div>
+    </div>
+    <script>
+        function generateStarsModal(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<span style="color: ${i <= rating ? '#fbbf24' : '#e5e7eb'}; font-size: 20px; margin-right: 2px;">★</span>`;
+            }
+            return stars;
+        }
+        async function viewFeedbackDetail(feedbackId) {
+            try {
+                const data = await API_HELPER.getFeedbackDetail(feedbackId);
+                const f = data.feedback;
+                const content = `
+                    <h3 style="margin-top:0;">Feedback Detail</h3>
+                    <p><strong>Coach:</strong> ${f.coach_name || ''}</p>
+                    <p><strong>Athlete:</strong> ${f.athlete_name || ''}</p>
+                    <p><strong>Performance Rating:</strong></p>
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 14px;
+                        margin-top: 8px;
+                        background-color: #f0f4f8;
+                        padding: 12px 18px;
+                        border-radius: 10px;
+                        box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+                        max-width: 250px;
+                    ">
+                      <div style="display: flex; gap: 4px; font-size: 22px; color: #fbbf24;">
+                        ${generateStarsModal(f.performance_rating || 0)}
+                      </div>
+                      <span style="
+                        background: #2563eb;
+                        color: white;
+                        font-weight: 700;
+                        border-radius: 12px;
+                        padding: 4px 11px;
+                        font-size: 18px;
+                        box-shadow: 0 2px 6px #2563eb88;
+                        min-width: 40px;
+                        text-align: center;
+                      ">
+                        ${f.performance_rating ? f.performance_rating + '.0' : 'N/A'}
+                      </span>
+                    </div>
+                    <div style="margin-top:12px;">
+                        <strong>Feedback:</strong>
+                        <div style="padding:10px; background:#f8f9fa; border-radius:6px; margin-top:6px; color:#22223a;">
+                            ${f.feedback_text}
+                        </div>
+                    </div>
+                    ${f.focus_areas ? `<div style="margin-top:10px;"><strong>Focus Areas:</strong> ${f.focus_areas}</div>` : ''}
+                    ${f.strengths ? `<div style="margin-top:10px;"><strong>Strengths:</strong> ${f.strengths}</div>` : ''}
+                    ${f.improvements_needed ? `<div style="margin-top:10px;"><strong>Improvements:</strong> ${f.improvements_needed}</div>` : ''}
+                `;
+                document.getElementById('feedbackDetailContent').innerHTML = content;
+                document.getElementById('feedbackDetailModal').style.display = 'flex';
+            } catch (err) {
+                console.error('Error loading feedback detail', err);
+                alert('Error loading feedback detail');
+            }
+        }
+    </script>
+    <footer class="footer">
+        &copy; 2025 CoachMePlay. All rights reserved.
+    </footer>
+</body>
+</html>

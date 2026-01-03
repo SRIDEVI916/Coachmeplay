@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>My Rentals - CoachMePlay</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f4f8;
+    margin: 0;
+    color: #22223a;
+  }
+  .navbar {
+    background: #2563eb;
+    padding: 15px 0;
+    box-shadow: 0 3px 16px rgba(37,99,235,0.12);
+  }
+  .navbar .container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+  }
+  .navbar-brand {
+    color: white;
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: 1px;
+    text-decoration: none;
+  }
+  .navbar-menu {
+    list-style: none;
+    display: flex;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+  }
+  .navbar-menu a {
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 6px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.16s, color 0.16s;
+  }
+  .navbar-menu a:hover,
+  .navbar-menu a.active {
+    background: #10b981;
+    color: white;
+  }
+  .dashboard {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  .welcome {
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+    color: white;
+    padding: 32px 30px;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(37,99,235,0.2);
+  }
+  .welcome h1 {
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    font-size: 2.4rem;
+  }
+  .welcome p {
+    margin: 0;
+    font-weight: 400;
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+  .stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  .stat-card {
+    background: white;
+    box-shadow: 0 6px 22px rgba(37,99,235,0.1);
+    padding: 26px 30px;
+    border-radius: 14px;
+    text-align: center;
+    cursor: default;
+  }
+  .stat-number {
+    font-size: 36px;
+    font-weight: 700;
+    color: #10b981;
+    margin: 16px 0 8px 0;
+  }
+  .stat-label {
+    font-size: 14px;
+    color: #555;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+  .rental-card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 6px 22px rgba(16,185,129,0.15);
+    transition: all 0.25s ease;
+  }
+  .rental-card:hover {
+    box-shadow: 0 14px 40px rgba(16,185,129,0.3);
+    transform: translateY(-3px);
+  }
+  .rental-header {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 20px;
+  }
+  .rental-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+  }
+  .rental-info h3 {
+    margin: 0 0 10px 0;
+    color: #22223a;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .rental-status {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 28px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    user-select: none;
+    letter-spacing: 1px;
+  }
+  .status-active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+  }
+  .status-completed {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+  }
+  .status-cancelled {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+  }
+  .status-overdue {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: white;
+  }
+  .return-btn {
+    padding: 14px 30px;
+    border-radius: 22px;
+    border: none;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 16px;
+  }
+  .return-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16,185,129,0.4);
+  }
+  .return-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+  }
+  .rental-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
+    gap: 20px;
+    margin-bottom: 18px;
+  }
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .detail-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .detail-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #22223a;
+  }
+  .address-section {
+    padding-top: 18px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 18px;
+  }
+  .address-title {
+    font-weight: 700;
+    color: #22223a;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .address-text {
+    color: #555;
+    line-height: 1.6;
+    padding-left: 30px;
+    font-size: 16px;
+  }
+  .overdue-warning {
+    margin-top: 18px;
+    padding: 15px;
+    border-radius: 14px;
+    color: #92400e;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff3cd 0%, #fef3c7 100%);
+    border-left: 5px solid #f59e0b;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .days-left-badge {
+    font-weight: 700;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 16px;
+    display: inline-block;
+  }
+  .days-left-normal {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #059669;
+  }
+  .days-left-urgent {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #dc2626;
+  }
+  .empty-rentals {
+    text-align: center;
+    padding: 80px 40px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 8px 26px rgba(16,185,129,0.15);
+  }
+  .empty-rentals h2 {
+    color: #22223a;
+    font-weight: 700;
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  .empty-rentals p {
+    margin: 0 0 25px;
+    color: #555;
+  }
+  .shop-btn {
+    display: inline-block;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+    color: white;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .shop-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
+  }
+  .loading {
+    text-align: center;
+    color: #999;
+    padding: 40px;
+    font-size: 16px;
+  }
+  @media (max-width: 768px) {
+    .rental-header {
+      grid-template-columns: 80px 1fr;
+      gap: 20px;
+    }
+    .return-btn {
+      grid-column: 1 / -1;
+      margin-top: 10px;
+    }
+    .rental-details {
+      grid-template-columns: 1fr;
+    }
+    .stats-section {
+      grid-template-columns: 1fr;
+    }
+  }
+
+        .footer {
+            background: #2563eb;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            margin-top: 48px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 -3px 14px #10b98144;
+        }
+        .footer p {
+            margin: 6px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="navbar-brand">CoachMePlay</a>
+      <ul class="navbar-menu">
+        <li><a href="/athlete/dashboard">Dashboard</a></li>
+        <li><a href="/shop">Shop</a></li>
+        <li><a href="/cart">Cart</a></li>
+        <li><a href="/orders">Orders</a></li>
+        <li><a href="/rentals" class="active">Rentals</a></li>
+        <li class="notification-wrapper">
+          <a href="#" id="notificationBell" class="notification-bell">
+            Notifications
+            <span id="notificationBadge" class="notification-badge">0</span>
+          </a>
+          <div id="notificationDropdown" class="notification-dropdown">
+            <div class="notification-header">
+              <h4>Notifications</h4>
+              <a href="#" onclick="markAllAsRead(); return false;" class="mark-all-read">Mark all read</a>
+            </div>
+            <div id="notificationList" class="notification-list">
+              <div class="notification-item empty">Loading...</div>
+            </div>
+          </div>
+        </li>
+        <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <div class="welcome">
+      <h1>📅 My Rentals</h1>
+      <p>Manage your equipment rentals</p>
+    </div>
+
+    <div class="stats-section" id="statsSection" style="display: none;">
+      <div class="stat-card">
+        <div style="font-size: 40px;">📦</div>
+        <div class="stat-number" id="totalRentals">0</div>
+        <div class="stat-label">Total Rentals</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size: 40px;">✅</div>
+        <div class="stat-number" id="activeRentals">0</div>
+        <div class="stat-label">Active Rentals</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size: 40px;">🏁</div>
+        <div class="stat-number" id="completedRentals">0</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+
+    <div id="rentalsContainer">
+      <p class="loading">Loading rentals...</p>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+  <script>
+    let userId = null;
+
+    async function init() {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch(`${API_URL}/auth/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          userId = data.user.user_id;
+          loadRentals();
+        }
+      } catch (error) {
+        console.error('Error initializing:', error);
+      }
+    }
+
+    async function loadRentals() {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch(`${API_URL}/shop/rentals/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          displayRentals(data.rentals);
+          updateStats(data.rentals);
+        } else {
+          document.getElementById('rentalsContainer').innerHTML = '<p class="loading">Error loading rentals</p>';
+        }
+      } catch (error) {
+        console.error('Error loading rentals:', error);
+        document.getElementById('rentalsContainer').innerHTML = '<p class="loading">Error loading rentals</p>';
+      }
+    }
+
+    function updateStats(rentals) {
+      if (rentals.length > 0) {
+        document.getElementById('statsSection').style.display = 'grid';
+        document.getElementById('totalRentals').textContent = rentals.length;
+
+        const active = rentals.filter(r => r.status === 'active').length;
+        const completed = rentals.filter(r => r.status === 'completed').length;
+
+        document.getElementById('activeRentals').textContent = active;
+        document.getElementById('completedRentals').textContent = completed;
+      }
+    }
+
+    function displayRentals(rentals) {
+      const container = document.getElementById('rentalsContainer');
+
+      if (rentals.length === 0) {
+        container.innerHTML = `
+          <div class="empty-rentals">
+            <div style="font-size: 80px; margin-bottom: 20px;">📅</div>
+            <h2>No rentals yet</h2>
+            <p>Start renting equipment from our shop!</p>
+            <a href="/shop" class="shop-btn">Browse Products</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = rentals.map(rental => {
+        const startDate = new Date(rental.rental_start_date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+        const endDate = new Date(rental.rental_end_date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+        const daysLeft = Math.ceil((new Date(rental.rental_end_date) - new Date()) / (1000 * 60 * 60 * 24));
+        const isOverdue = rental.status === 'active' && daysLeft < 0;
+        const isUrgent = rental.status === 'active' && daysLeft >= 0 && daysLeft <= 2;
+
+        return `
+          <div class="rental-card">
+            <div class="rental-header">
+              <img src="${rental.image_url}" 
+                   alt="${rental.product_name}" 
+                   class="rental-image"
+                   onerror="this.style.background='linear-gradient(135deg, #2563eb 0%, #10b981 100%)'; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22 font-size=%2240%22%3E📦%3C/text%3E%3C/svg%3E'">
+              <div class="rental-info">
+                <h3>${rental.product_name}</h3>
+                <span class="rental-status status-${isOverdue ? 'overdue' : rental.status}">
+                    ${isOverdue ? 'Overdue' : rental.status}
+                </span>
+              </div>
+              ${rental.status === 'active' ? `
+                  <button class="return-btn" onclick="returnRental(${rental.rental_id})">
+                      ✓ Return Item
+                  </button>
+              ` : ''}
+            </div>
+
+            <div class="rental-details">
+              <div class="detail-item">
+                <div class="detail-label">Rental ID</div>
+                <div class="detail-value">#${rental.rental_id}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Start Date</div>
+                <div class="detail-value">${startDate}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">End Date</div>
+                <div class="detail-value">${endDate}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Duration</div>
+                <div class="detail-value">${rental.rental_duration_days} days</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Type</div>
+                <div class="detail-value">${rental.rental_type.toUpperCase()}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Total Amount</div>
+                <div class="detail-value" style="color: #2563eb;">$${parseFloat(rental.total_amount).toFixed(2)}</div>
+              </div>
+              ${rental.deposit_amount ? `
+                <div class="detail-item">
+                  <div class="detail-label">Security Deposit</div>
+                  <div class="detail-value" style="color: #10b981;">$${parseFloat(rental.deposit_amount).toFixed(2)}</div>
+                </div>
+              ` : ''}
+              ${rental.status === 'active' && daysLeft >= 0 ? `
+                <div class="detail-item">
+                  <div class="detail-label">Days Left</div>
+                  <div class="detail-value">
+                    <span class="days-left-badge ${isUrgent ? 'days-left-urgent' : 'days-left-normal'}">
+                      ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'}
+                    </span>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="address-section">
+              <div class="address-title">
+                📍 Delivery Address
+              </div>
+              <div class="address-text">${rental.delivery_address}</div>
+            </div>
+
+            ${isOverdue ? `
+              <div class="overdue-warning">
+                <span style="font-size: 20px;">⚠️</span>
+                <span>This rental is overdue by ${Math.abs(daysLeft)} ${Math.abs(daysLeft) === 1 ? 'day' : 'days'}. Please return the item immediately.</span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function returnRental(rentalId) {
+      if (!confirm('Are you sure you want to mark this rental as returned?')) return;
+
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch(`${API_URL}/shop/rentals/${rentalId}/return`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          alert('Rental returned successfully! Your security deposit will be refunded. 🎉');
+          loadRentals();
+        } else {
+          const data = await response.json();
+          alert('Failed to return rental: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error returning rental:', error);
+        alert('Failed to return rental');
+      }
+    }
+
+    // Initialize on page load
+    init();
+  </script>
+  <footer class="footer">
+        &copy; 2025 CoachMePlay. All rights reserved.
+    </footer>
+</body>
+</html>

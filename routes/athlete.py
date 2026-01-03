@@ -1,5 +1,9 @@
 from flask import Blueprint, request, jsonify, current_app
-from datetime import datetime
+from datetime import datetime, timedelta
+from utils import create_notification
+import jwt
+import os
+from werkzeug.utils import secure_filename
 
 athlete_bp = Blueprint('athlete', __name__)
 
@@ -170,62 +174,59 @@ def update_athlete_profile():
         cursor.close()
         return jsonify({'error': str(e)}), 500
 
-@athlete_bp.route('/upload-picture', methods=['POST'])
+@athlete_bp.route('/upload-picture', methods=['POST', 'OPTIONS'])
 def upload_athlete_picture():
     """Upload athlete profile picture"""
+    if request.method == 'OPTIONS':
+        return '', 200
+    
     from app import mysql, allowed_file
-    from werkzeug.utils import secure_filename
-    import os
+    
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    
+    try:
+        user_data = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
+        user_id = user_data['user_id']
+    except:
+        return jsonify({'error': 'Invalid token'}), 401
     
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
     
     file = request.files['file']
-    user_id = request.form.get('user_id')
-    
-    if not user_id:
-        return jsonify({'error': 'User ID required'}), 400
-    
     if file.filename == '':
         return jsonify({'error': 'No file selected'}), 400
     
     if file and allowed_file(file.filename):
-        filename = secure_filename(f"athlete_{user_id}_{file.filename}")
-        filepath = os.path.join('static/uploads/profiles', filename)
+        filename = secure_filename(file.filename)
+        upload_folder = 'static/uploads/profiles/'
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        filepath = os.path.join(upload_folder, f"{user_id}_{filename}")
         file.save(filepath)
         
+        profile_url = f'/static/uploads/profiles/{user_id}_{filename}'
         cursor = mysql.connection.cursor()
-        try:
-            cursor.execute("""
-                UPDATE users 
-                SET profile_picture = %s
-                WHERE user_id = %s
-            """, (filepath, user_id))
-            
-            mysql.connection.commit()
-            cursor.close()
-            
-            return jsonify({
-                'message': 'Picture uploaded successfully',
-                'file_path': '/' + filepath
-            }), 200
-            
-        except Exception as e:
-            mysql.connection.rollback()
-            cursor.close()
-            return jsonify({'error': str(e)}), 500
+        cursor.execute("UPDATE users SET profile_picture = %s WHERE user_id = %s", (profile_url, user_id))
+        mysql.connection.commit()
+        cursor.close()
+        
+        return jsonify({
+            'message': 'Profile picture uploaded successfully',
+            'profile_picture': profile_url
+        }), 200
     
-    return jsonify({'error': 'Invalid file type. Use PNG, JPG, or GIF'}), 400
+    return jsonify({'error': 'Invalid file type'}), 400
 
 @athlete_bp.route('/analytics/<int:athlete_id>', methods=['GET'])
 def get_athlete_analytics(athlete_id):
     """Get comprehensive analytics for athlete"""
     from app import mysql
-    from datetime import datetime, timedelta
     
     cursor = mysql.connection.cursor()
     
     try:
+        # Total workouts
         cursor.execute("""
             SELECT COUNT(*) as count 
             FROM performance_tracking 
@@ -234,6 +235,7 @@ def get_athlete_analytics(athlete_id):
         result = cursor.fetchone()
         total_workouts = result['count'] if result else 0
         
+        # Workouts in last week
         week_ago = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
         cursor.execute("""
             SELECT COUNT(*) as count 
@@ -243,25 +245,7 @@ def get_athlete_analytics(athlete_id):
         result = cursor.fetchone()
         week_workouts = result['count'] if result else 0
         
-        thirty_days_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
-        cursor.execute("""
-            SELECT DATE_FORMAT(date, '%%Y-%%m-%%d') as date, AVG(metric_value) as value 
-            FROM performance_tracking 
-            WHERE athlete_id = %s AND date >= %s
-            GROUP BY DATE_FORMAT(date, '%%Y-%%m-%%d')
-            ORDER BY date
-        """, (athlete_id, thirty_days_ago))
-        performance_trend = cursor.fetchall()
-        
-        cursor.execute("""
-            SELECT metric_type, COUNT(*) as count 
-            FROM performance_tracking 
-            WHERE athlete_id = %s
-            GROUP BY metric_type
-        """, (athlete_id,))
-        rows = cursor.fetchall()
-        metric_distribution = {row['metric_type']: row['count'] for row in rows} if rows else {}
-        
+        # Weekly data grouped by dayname
         cursor.execute("""
             SELECT DAYNAME(date) as day, COUNT(*) as count 
             FROM performance_tracking 
@@ -271,6 +255,7 @@ def get_athlete_analytics(athlete_id):
         rows = cursor.fetchall()
         weekly_data = {row['day']: row['count'] for row in rows} if rows else {}
         
+        # Active goals count
         cursor.execute("""
             SELECT COUNT(*) as count 
             FROM goals 
@@ -279,6 +264,7 @@ def get_athlete_analytics(athlete_id):
         result = cursor.fetchone()
         active_goals = result['count'] if result else 0
         
+        # Completed goals count
         cursor.execute("""
             SELECT COUNT(*) as count 
             FROM goals 
@@ -292,8 +278,9 @@ def get_athlete_analytics(athlete_id):
         return jsonify({
             'total_workouts': total_workouts,
             'week_workouts': week_workouts,
-            'performance_trend': performance_trend,
-            'metric_distribution': metric_distribution,
+            # Removed below two data sets per your request
+            # 'performance_trend': [],
+            # 'metric_distribution': {},
             'weekly_data': weekly_data,
             'active_goals': active_goals,
             'completed_goals': completed_goals
@@ -305,13 +292,12 @@ def get_athlete_analytics(athlete_id):
         return jsonify({
             'total_workouts': 0,
             'week_workouts': 0,
-            'performance_trend': [],
-            'metric_distribution': {},
             'weekly_data': {},
             'active_goals': 0,
             'completed_goals': 0,
             'error': str(e)
         }), 200
+
 
 @athlete_bp.route('/goals/<int:athlete_id>', methods=['GET'])
 def get_athlete_goals(athlete_id):
@@ -342,6 +328,9 @@ def create_goal():
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'Missing required fields'}), 400
     
+    athlete_id = data['athlete_id']
+    goal_type = data['goal_type']
+    
     cursor = mysql.connection.cursor()
     
     try:
@@ -349,8 +338,8 @@ def create_goal():
             INSERT INTO goals (athlete_id, goal_type, target_value, current_value, target_date, status)
             VALUES (%s, %s, %s, %s, %s, 'active')
         """, (
-            data['athlete_id'],
-            data['goal_type'],
+            athlete_id,
+            goal_type,
             data['target_value'],
             data['current_value'],
             data['target_date']
@@ -358,6 +347,29 @@ def create_goal():
         
         mysql.connection.commit()
         goal_id = cursor.lastrowid
+        
+        # Notify coach about new goal if athlete has a coach
+        cursor.execute("SELECT coach_id FROM athletes WHERE athlete_id = %s", (athlete_id,))
+        result = cursor.fetchone()
+        
+        if result and result['coach_id']:
+            cursor.execute("SELECT u.full_name FROM athletes a JOIN users u ON a.user_id = u.user_id WHERE a.athlete_id = %s", (athlete_id,))
+            athlete_result = cursor.fetchone()
+            athlete_name = athlete_result['full_name'] if athlete_result else 'An athlete'
+            
+            cursor.execute("SELECT user_id FROM coaches WHERE coach_id = %s", (result['coach_id'],))
+            coach_result = cursor.fetchone()
+            
+            if coach_result:
+                create_notification(
+                    mysql,
+                    coach_result['user_id'],
+                    'goal',
+                    ' New Goal Set',
+                    f'{athlete_name} set a new goal: {goal_type}',
+                    goal_id
+                )
+        
         cursor.close()
         
         return jsonify({
@@ -379,12 +391,40 @@ def complete_goal(goal_id):
     
     try:
         cursor.execute("""
+            SELECT g.athlete_id, g.goal_type, a.coach_id
+            FROM goals g
+            JOIN athletes a ON g.athlete_id = a.athlete_id
+            WHERE g.goal_id = %s
+        """, (goal_id,))
+        
+        goal_info = cursor.fetchone()
+        
+        cursor.execute("""
             UPDATE goals 
             SET status = 'completed', current_value = target_value
             WHERE goal_id = %s
         """, (goal_id,))
         
         mysql.connection.commit()
+        
+        if goal_info and goal_info['coach_id']:
+            cursor.execute("SELECT u.full_name FROM athletes a JOIN users u ON a.user_id = u.user_id WHERE a.athlete_id = %s", (goal_info['athlete_id'],))
+            athlete_result = cursor.fetchone()
+            athlete_name = athlete_result['full_name'] if athlete_result else 'An athlete'
+            
+            cursor.execute("SELECT user_id FROM coaches WHERE coach_id = %s", (goal_info['coach_id'],))
+            coach_result = cursor.fetchone()
+            
+            if coach_result:
+                create_notification(
+                    mysql,
+                    coach_result['user_id'],
+                    'goal',
+                    ' Goal Completed!',
+                    f'{athlete_name} completed their {goal_info["goal_type"]} goal!',
+                    goal_id
+                )
+        
         cursor.close()
         
         return jsonify({'message': 'Goal marked as completed!'}), 200
@@ -447,16 +487,44 @@ def update_assignment_status(assignment_id):
     if 'status' not in data or data['status'] not in ['pending', 'in_progress', 'completed']:
         return jsonify({'error': 'Invalid status'}), 400
     
+    status = data['status']
     cursor = mysql.connection.cursor()
     
     try:
         cursor.execute("""
+            SELECT coach_id, athlete_id, task_title
+            FROM coach_assignments
+            WHERE assignment_id = %s
+        """, (assignment_id,))
+        
+        assignment_info = cursor.fetchone()
+        
+        cursor.execute("""
             UPDATE coach_assignments 
             SET status = %s
             WHERE assignment_id = %s
-        """, (data['status'], assignment_id))
+        """, (status, assignment_id))
         
         mysql.connection.commit()
+        
+        if status == 'completed' and assignment_info:
+            cursor.execute("SELECT u.full_name FROM athletes a JOIN users u ON a.user_id = u.user_id WHERE a.athlete_id = %s", (assignment_info['athlete_id'],))
+            athlete_result = cursor.fetchone()
+            athlete_name = athlete_result['full_name'] if athlete_result else 'An athlete'
+            
+            cursor.execute("SELECT user_id FROM coaches WHERE coach_id = %s", (assignment_info['coach_id'],))
+            coach_result = cursor.fetchone()
+            
+            if coach_result:
+                create_notification(
+                    mysql,
+                    coach_result['user_id'],
+                    'task',
+                    ' Task Completed!',
+                    f'{athlete_name} completed: {assignment_info["task_title"]}',
+                    assignment_id
+                )
+        
         cursor.close()
         
         return jsonify({'message': 'Status updated successfully'}), 200
@@ -465,3 +533,92 @@ def update_assignment_status(assignment_id):
         mysql.connection.rollback()
         cursor.close()
         return jsonify({'error': str(e)}), 500
+
+@athlete_bp.route('/all-coaches', methods=['GET'])
+def get_all_coaches():
+    """Get all coaches for messaging"""
+    from app import mysql
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute("""
+        SELECT 
+            u.user_id, 
+            u.full_name, 
+            u.profile_picture,
+            c.coach_id
+        FROM users u
+        JOIN coaches c ON u.user_id = c.user_id
+        WHERE u.user_type = 'coach'
+        ORDER BY u.full_name
+    """)
+    
+    coaches = cursor.fetchall()
+    cursor.close()
+    
+    return jsonify({'coaches': coaches}), 200
+
+@athlete_bp.route('/log-workout', methods=['POST'])
+def log_workout():
+    from app import mysql
+    data = request.json
+    
+    cursor = mysql.connection.cursor()
+    
+    try:
+        cursor.execute("""
+            INSERT INTO workout_logs 
+            (athlete_id, session_id, completed_date, completion_status, notes)
+            VALUES (%s, %s, CURDATE(), %s, %s)
+        """, (
+            data['athlete_id'],
+            data['session_id'],
+            data.get('completion_status', 'completed'),
+            data.get('notes')
+        ))
+        
+        mysql.connection.commit()
+        cursor.close()
+        
+        return jsonify({'message': 'Workout logged successfully'}), 201
+    
+    except Exception as e:
+        mysql.connection.rollback()
+        cursor.close()
+        return jsonify({'error': str(e)}), 500
+
+@athlete_bp.route('/recipes', methods=['GET'])
+def get_recipes():
+    """Browse all recipes"""
+    from app import mysql
+    
+    category = request.args.get('category', None)
+    
+    cursor = mysql.connection.cursor()
+    
+    if category:
+        cursor.execute("""
+            SELECT * FROM recipes 
+            WHERE category = %s 
+            ORDER BY recipe_name
+        """, (category,))
+    else:
+        cursor.execute("SELECT * FROM recipes ORDER BY category, recipe_name")
+    
+    recipes = cursor.fetchall()
+    cursor.close()
+    
+    return jsonify({'recipes': recipes}), 200
+
+@athlete_bp.route('/recipes/<int:recipe_id>', methods=['GET'])
+def get_recipe_detail(recipe_id):
+    """Get recipe details"""
+    from app import mysql
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM recipes WHERE recipe_id = %s", (recipe_id,))
+    recipe = cursor.fetchone()
+    cursor.close()
+    
+    if recipe:
+        return jsonify({'recipe': recipe}), 200
+    return jsonify({'error': 'Recipe not found'}), 404

@@ -6,6 +6,74 @@
     <title>Coaching Requests - CoachMePlay</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f0f4f8;
+            color: #22223a;
+        }
+        .dashboard {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+         .navbar {
+            background: #2563eb;
+            box-shadow: 0 3px 16px rgba(37,99,235,0.12);
+            padding: 15px 0;
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-weight: 700;
+            font-size: 26px;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .navbar-menu {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+        .navbar-menu li a {
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            transition: background 0.16s, color 0.16s;
+            display: block;
+        }
+        .navbar-menu li a:hover {
+            background: #10b981;
+        }
+        .footer {
+            background: #2563eb;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            margin-top: 48px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 -3px 14px #10b98144;
+        }
+        .footer p {
+            margin: 6px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
         .requests-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
         .request-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .request-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -23,9 +91,25 @@
             <a href="/" class="navbar-brand">CoachMePlay</a>
             <ul class="navbar-menu">
                 <li><a href="/coach/dashboard">Dashboard</a></li>
-                <li><a href="/coach/requests">Requests</a></li>
-                <li><a href="/coach/profile">Profile</a></li>
                 <li><a href="/coach/analytics">Analytics</a></li>
+                <li><a href="/coach/assign-task">Requests</a></li>
+                <li><a href="/messages">Messages</a></li>
+                <li><a href="/coach/profile">Profile</a></li>
+                <li class="notification-wrapper">
+                    <a href="#" id="notificationBell" class="notification-bell">
+                        🔔
+                        <span id="notificationBadge" class="notification-badge">0</span>
+                    </a>
+                    <div id="notificationDropdown" class="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <a href="#" onclick="markAllAsRead(); return false;" class="mark-all-read">Mark all read</a>
+                        </div>
+                        <div id="notificationList" class="notification-list">
+                            <div class="notification-item empty">Loading...</div>
+                        </div>
+                    </div>
+                </li>
                 <li><a href="#" onclick="logout(); return false;">Logout</a></li>
             </ul>
         </div>
@@ -135,5 +219,8 @@
         init();
     })();
     </script>
+    <footer class="footer">
+        &copy; 2025 CoachMePlay. All rights reserved.
+    </footer>
 </body>
 </html>

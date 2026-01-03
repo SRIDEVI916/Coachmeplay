@@ -1,33 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Register - CoachMePlay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            color: #22223a;
+        }
+        .navbar {
+            background: #2563eb;
+            box-shadow: 0 3px 16px rgba(37,99,235,0.12);
+            padding: 15px 0;
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .navbar-menu {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-menu a {
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            transition: background 0.16s, color 0.16s;
+        }
+        .navbar-menu a:hover {
+            background: #10b981;
+            color: #fff;
+        }
         .register-container {
             max-width: 500px;
-            margin: 80px auto;
+            margin: 70px auto;
             padding: 0 20px;
         }
         .register-card {
-            background: white;
-            border-radius: 8px;
-            padding: 40px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #fff;
+            border-radius: 15px;
+            padding: 44px 32px 36px 32px;
+            box-shadow: 0 6px 24px rgba(37,99,235,0.10);
+            transition: box-shadow 0.21s;
+        }
+        .register-card:hover {
+            box-shadow: 0 16px 38px #10b98133;
         }
         .register-card h1 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 27px;
             color: #2563eb;
+            font-weight: 700;
+            font-size: 2.1rem;
         }
-        .register-card .btn {
+        .form-group {
+            margin-bottom: 22px;
+        }
+        .form-group label {
+            display: block;
+            color: #2563eb;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group select {
             width: 100%;
+            padding: 12px 13px;
+            border-radius: 9px;
+            border: 1.6px solid #e5e7eb;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.18s;
+            background: #f6fbff;
+            outline: none;
+            color: #22223a;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #10b981;
+            background: #e0f7f2;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px 0;
+            border-radius: 28px;
+            font-size: 17px;
+            font-weight: 700;
+            text-decoration: none;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 13px rgba(16,185,129,0.11);
+            transition: background 0.19s, box-shadow 0.21s;
+        }
+        .btn:hover {
+            background: #10b981;
+            color: #fff;
+            box-shadow: 0 8px 24px #10b98133;
         }
         .text-center {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 23px;
+            font-size: 15px;
+        }
+        .text-center a {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.16s;
+        }
+        .text-center a:hover {
+            color: #10b981;
+            text-decoration: underline;
+        }
+        #alert {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #2563eb;
+            font-weight: 700;
+            display: none;
+        }
+        @media (max-width: 700px) {
+            .register-container {
+                margin: 24px auto;
+                max-width: 92vw;
+            }
+            .register-card {
+                padding: 26px 6vw 24px 6vw;
+            }
         }
     </style>
 </head>
@@ -85,7 +211,6 @@
             </p>
         </div>
     </div>
-    
     <script src="{{ url_for('static', filename='js/auth.js') }}?v=3"></script>
 </body>
 </html>

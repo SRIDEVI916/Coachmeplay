@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shop - CoachMePlay</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f4f8;
+    margin: 0;
+    color: #22223a;
+  }
+  .navbar {
+    background: #2563eb;
+    padding: 15px 0;
+    box-shadow: 0 3px 16px rgba(37,99,235,0.12);
+  }
+  .navbar .container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+  }
+  .navbar-brand {
+    color: white;
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: 1px;
+    text-decoration: none;
+  }
+  .navbar-menu {
+    list-style: none;
+    display: flex;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+  }
+  .navbar-menu a {
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 6px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.16s, color 0.16s;
+  }
+  .navbar-menu a:hover,
+  .navbar-menu a.active {
+    background: #10b981;
+    color: white;
+  }
+  .dashboard {
+    max-width: 1200px;
+    margin: 25px auto;
+    padding: 20px;
+  }
+  .welcome {
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+    color: white;
+    padding: 32px 30px;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(37,99,235,0.2);
+  }
+  .welcome h1 {
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    font-size: 2.4rem;
+  }
+  .welcome p {
+    margin: 0;
+    font-weight: 400;
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+  .stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  .stat-card {
+    background: white;
+    box-shadow: 0 6px 22px rgba(37,99,235,0.1);
+    padding: 26px 30px;
+    border-radius: 14px;
+    text-align: center;
+    cursor: default;
+  }
+  .stat-number {
+    font-size: 36px;
+    font-weight: 700;
+    color: #10b981;
+    margin: 16px 0 8px 0;
+  }
+  .stat-label {
+    font-size: 14px;
+    color: #555;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+  .category-filter-section {
+    background: white;
+    padding: 28px 30px;
+    margin-bottom: 30px;
+    border-radius: 14px;
+    box-shadow: 0 6px 22px rgba(37,99,235,0.06);
+  }
+  .category-filter-section h3 {
+    color: #2563eb;
+    margin-bottom: 22px;
+    font-weight: 700;
+    font-size: 1.4rem;
+  }
+  .category-filter {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .category-btn {
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 32px;
+    border-radius: 32px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .category-btn:hover {
+    background: #f0f7ff;
+    border-color: #2563eb;
+    color: #2563eb;
+  }
+  .category-btn.active {
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+    color: white;
+    border-color: transparent;
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .product-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 26px rgba(37,99,235,0.1);
+    transition: all 0.25s ease;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 21px 46px rgba(16,185,129,0.3);
+  }
+  .product-image {
+    width: 100%;
+    height: 230px;
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .product-image-placeholder {
+    z-index: 1;
+  }
+  .product-info {
+    padding: 25px 24px;
+  }
+  .category-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #2563eb;
+    color: white;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .product-brand {
+    color: #999;
+    font-size: 13px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .product-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #22223a;
+    min-height: 48px;
+  }
+  .stock-info {
+    font-size: 12px;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .stock-info.in-stock {
+    color: #10b981;
+  }
+  .stock-info.out-of-stock {
+    color: #ef4444;
+  }
+  .stock-info.low-stock {
+    color: #f59e0b;
+  }
+  .product-price {
+    font-size: 26px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 25px;
+  }
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+  }
+  .add-to-cart-btn:hover:not(:disabled) {
+    box-shadow: 0 10px 30px rgba(37,99,235,0.45);
+    transform: translateY(-3px);
+  }
+  .add-to-cart-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #ccc;
+  }
+  .cart-icon {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+    color: white;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 40px rgba(37,99,235,0.4);
+    z-index: 1000;
+    transition: all 0.35s ease;
+  }
+  .cart-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 48px rgba(16,185,129,0.6);
+  }
+  .cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ef4444;
+    width: 26px;
+    height: 26px;
+    color: white;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .loading {
+    text-align: center;
+    color: #999;
+    padding: 50px;
+    font-size: 17px;
+  }
+  /* Rental Modal Styling */
+  #rentalModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #rentalModal .modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 30px 28px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 15px 50px rgb(0 0 0 / 0.2);
+    box-sizing: border-box;
+  }
+  #rentalModal h2 {
+    margin: 0 0 24px 0;
+    font-weight: 700;
+    font-size: 24px;
+    color: #2563eb;
+  }
+  #rentalModal h3 {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 25px;
+    color: #22223a;
+  }
+  #rentalModal .form-group {
+    margin-bottom: 18px;
+  }
+  #rentalModal label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #22223a;
+  }
+  #rentalModal select,
+  #rentalModal input[type="date"],
+  #rentalModal input[type="number"],
+  #rentalModal textarea {
+    width: 100%;
+    border-radius: 14px;
+    border: 2px solid #d1d5db;
+    font-size: 16px;
+    padding: 14px 18px;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+  #rentalModal textarea {
+    resize: none;
+  }
+  #rentalModal select:focus,
+  #rentalModal input[type="date"]:focus,
+  #rentalModal input[type="number"]:focus,
+  #rentalModal textarea:focus {
+    border-color: #2563eb;
+    outline: none;
+  }
+  #rentalModal .rental-cost-box {
+    background: #f1faff;
+    padding: 14px 20px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+  }
+  #rentalModal .modal-buttons {
+    display: flex;
+    gap: 18px;
+  }
+  #rentalModal .btn-secondary-modal,
+  #rentalModal .btn-primary-modal {
+    flex: 1;
+    padding: 14px 0;
+    border-radius: 14px;
+    border: none;
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    transition: filter 0.35s ease;
+  }
+  #rentalModal .btn-primary-modal {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+  }
+  #rentalModal .btn-primary-modal:hover {
+    filter: brightness(0.95);
+  }
+  #rentalModal .btn-secondary-modal {
+    background: #f9f9f9;
+    color: #999;
+  }
+  #rentalModal .btn-secondary-modal:hover {
+    filter: brightness(0.85);
+  }
+  /* Responsive */
+  @media (max-width: 768px) {
+    .products-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .stats-section {
+      grid-template-columns: 1fr;
+    }
+    .cart-icon {
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+    }
+  }
+
+        .footer {
+            background: #2563eb;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            margin-top: 48px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 -3px 14px #10b98144;
+        }
+        .footer p {
+            margin: 6px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-brand">CoachMePlay</a>
+    <ul class="navbar-menu">
+      <li><a href="/athlete/dashboard">Dashboard</a></li>
+      <li><a href="/shop" class="active">Shop</a></li>
+      <li><a href="/rentals">Rentals</a></li>
+      <li class="notification-wrapper">
+        <a href="#" id="notificationBell" class="notification-bell">Notifications<span id="notificationBadge" class="notification-badge">0</span></a>
+        <div id="notificationDropdown" class="notification-dropdown">
+          <div class="notification-header">
+            <h4>Notifications</h4>
+            <a href="#" onclick="markAllAsRead(); return false;" class="mark-all-read">Mark all read</a>
+          </div>
+          <div id="notificationList" class="notification-list">
+            <div class="notification-item empty">Loading...</div>
+          </div>
+        </div>
+      </li>
+      <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="dashboard">
+  <div class="welcome">
+    <h1>🛒 Sports Equipment Store</h1>
+    <p>Get the best gear for your training</p>
+  </div>
+
+  <div class="stats-section">
+    <div class="stat-card">
+      <div style="font-size: 40px;">📦</div>
+      <div class="stat-number" id="totalProducts">0</div>
+      <div class="stat-label">Available Products</div>
+    </div>
+    <div class="stat-card">
+      <div style="font-size: 40px;">🏷️</div>
+      <div class="stat-number" id="categoryCount">0</div>
+      <div class="stat-label">Categories</div>
+    </div>
+    <div class="stat-card">
+      <div style="font-size: 40px;">🛍️</div>
+      <div class="stat-number" id="cartItemCount">0</div>
+      <div class="stat-label">Items in Cart</div>
+    </div>
+  </div>
+
+  <div class="category-filter-section">
+    <h3>Filter by Category</h3>
+    <div class="category-filter">
+      <button class="category-btn active" onclick="filterCategory(null, this)">All Products</button>
+      <button class="category-btn" onclick="filterCategory('equipment', this)">🏋️ Equipment</button>
+      <button class="category-btn" onclick="filterCategory('apparel', this)">👕 Apparel</button>
+      <button class="category-btn" onclick="filterCategory('nutrition', this)">💊 Nutrition</button>
+      <button class="category-btn" onclick="filterCategory('accessories', this)">🎒 Accessories</button>
+    </div>
+  </div>
+
+  <div class="products-grid" id="productsGrid">
+    <p class="loading">Loading products...</p>
+  </div>
+</div>
+
+<div class="cart-icon" onclick="window.location.href='/cart'">
+  🛒
+  <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+</div>
+
+<!-- Rental Modal -->
+<div id="rentalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+  <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+    <h2 style="margin-bottom: 20px; color: #2563eb;">📅 Rent Equipment</h2>
+    <h3 id="rentalProductName" style="margin-bottom: 20px; color: #333;"></h3>
+    
+    <form id="rentalForm">
+      <div class="form-group">
+        <label>Rental Type *</label>
+        <select id="rentalType" required onchange="calculateRentalCost()">
+          <option value="daily">Daily Rental</option>
+          <option value="weekly">Weekly Rental</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Start Date *</label>
+        <input type="date" id="rentalStartDate" required onchange="calculateRentalCost()">
+      </div>
+      
+      <div class="form-group">
+        <label>Duration (days) *</label>
+        <input type="number" id="rentalDuration" required min="1" value="1" onchange="calculateRentalCost()">
+      </div>
+      
+      <div class="form-group">
+        <label>Delivery Address *</label>
+        <textarea id="rentalAddress" required rows="3" placeholder="Enter your complete delivery address"></textarea>
+      </div>
+      
+      <div style="background: #f0f7ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+          <span>Rental Cost:</span>
+          <span style="font-weight: 600;" id="rentalCostDisplay">$0.00</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+          <span>Security Deposit:</span>
+          <span style="font-weight: 600;">$50.00</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-top: 2px solid #2563eb; padding-top: 10px; margin-top: 10px;">
+          <span style="font-size: 18px; font-weight: 600;">Total:</span>
+          <span style="font-size: 18px; font-weight: 600; color: #2563eb;" id="rentalTotalDisplay">$50.00</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 10px;">
+        <button type="button" onclick="closeRentalModal()" style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Cancel</button>
+        <button type="submit" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">Book Rental</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+<script>
+let currentCategory = null;
+let userId = null;
+let allProducts = [];
+let currentRentalProduct = null;
+let rentalPriceDaily = 0;
+let rentalPriceWeekly = 0;
+
+const categoryIcons = {
+  equipment: '🏋️',
+  apparel: '👕',
+  nutrition: '💊',
+  accessories: '🎒',
+};
+
+async function init() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${API_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      userId = data.user.user_id;
+      loadProducts();
+      updateCartBadge();
+    }
+  } catch (error) {
+    console.error('Error initializing:', error);
+  }
+}
+
+async function loadProducts(category = null) {
+  const token = localStorage.getItem('token');
+  const url = category ? `${API_URL}/shop/products?category=${category}` : `${API_URL}/shop/products`;
+
+  try {
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      allProducts = data.products;
+      displayProducts(data.products);
+      updateStats(data.products);
+    } else {
+      document.getElementById('productsGrid').innerHTML = '<p class="loading">Error loading products</p>';
+    }
+  } catch (error) {
+    console.error('Error loading products:', error);
+    document.getElementById('productsGrid').innerHTML = '<p class="loading">Error loading products</p>';
+  }
+}
+
+function displayProducts(products) {
+  const grid = document.getElementById('productsGrid');
+
+  if (products.length === 0) {
+    grid.innerHTML = '<p class="loading">No products found in this category</p>';
+    return;
+  }
+
+  grid.innerHTML = products
+    .map(product => {
+      const stockStatus =
+        product.stock_quantity === 0 ? 'out-of-stock' : product.stock_quantity < 10 ? 'low-stock' : 'in-stock';
+      const stockText =
+        product.stock_quantity === 0 ? 'Out of Stock' : product.stock_quantity < 10 ? `Only ${product.stock_quantity} left!` : `In Stock: ${product.stock_quantity}`;
+
+      return `
+                    <div class="product-card">
+                        <div class="product-image">
+                            ${
+                              product.image_url
+                                ? `<img src="${product.image_url}" alt="${product.product_name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`
+                                : ''
+                            }
+                            <span class="product-image-placeholder" style="${
+                              product.image_url ? 'display: none;' : ''
+                            }">
+                                ${categoryIcons[product.category] || '🛍️'}
+                            </span>
+                        </div>
+                        <div class="product-info">
+                            <span class="category-badge">${product.category}</span>
+                            <div class="product-brand">${product.brand || 'CoachMePlay'}</div>
+                            <div class="product-name">${product.product_name}</div>
+                            <div class="stock-info ${stockStatus}">
+                                ${stockText}
+                            </div>
+                            <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
+                            
+                            ${
+                              product.is_rentable && product.available_for_rent > 0
+                                ? `
+                                    <div class="rental-info-box">
+                                        <div class="rental-title">🔄 Also Available for Rent</div>
+                                        <div class="rental-prices">
+                                            $${parseFloat(product.rental_price_daily).toFixed(2)}/day or $${parseFloat(product.rental_price_weekly).toFixed(2)}/week
+                                        </div>
+                                        <div class="rental-available">
+                                            ${product.available_for_rent} available for rent
+                                        </div>
+                                    </div>
+                                    <button 
+                                        class="add-to-cart-btn" 
+                                        onclick="openRentalModal(${product.product_id}, '${product.product_name.replace(/'/g, "\\'")}', ${product.rental_price_daily}, ${product.rental_price_weekly})"
+                                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); margin-top: 10px;">
+                                        📅 Rent This Item
+                                    </button>
+                                `
+                                : ''
+                            }
+                            
+                            <button 
+                                class="add-to-cart-btn" 
+                                onclick="addToCart(${product.product_id})"
+                                ${product.stock_quantity === 0 ? 'disabled' : ''}>
+                                ${product.stock_quantity > 0 ? '🛒 Add to Cart' : 'Out of Stock'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+    })
+    .join('');
+}
+
+function updateStats(products) {
+  document.getElementById('totalProducts').textContent = products.length;
+
+  const uniqueCategories = [...new Set(products.map(p => p.category))];
+  document.getElementById('categoryCount').textContent = uniqueCategories.length;
+}
+
+function filterCategory(category, btn) {
+  document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentCategory = category;
+  loadProducts(category);
+}
+
+async function addToCart(productId) {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${API_URL}/shop/cart/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        product_id: productId,
+        quantity: 1,
+      }),
+    });
+
+    if (response.ok) {
+      const product = allProducts.find(p => p.product_id === productId);
+      alert(`${product ? product.product_name : 'Product'} added to cart! 🛒`);
+      updateCartBadge();
+    } else {
+      const data = await response.json();
+      alert(data.message || 'Failed to add to cart');
+    }
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    alert('Failed to add to cart');
+  }
+}
+
+async function updateCartBadge() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${API_URL}/shop/cart/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const badge = document.getElementById('cartBadge');
+      const totalItems = data.cart.reduce((sum, item) => sum + item.quantity, 0);
+
+      if (totalItems > 0) {
+        badge.textContent = totalItems;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+
+      document.getElementById('cartItemCount').textContent = totalItems;
+    }
+  } catch (error) {
+    console.error('Error updating cart badge:', error);
+  }
+}
+
+function openRentalModal(productId, productName, priceDaily, priceWeekly) {
+  currentRentalProduct = productId;
+  rentalPriceDaily = priceDaily;
+  rentalPriceWeekly = priceWeekly;
+
+  document.getElementById('rentalProductName').textContent = productName;
+  document.getElementById('rentalModal').style.display = 'flex';
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('rentalStartDate').min = today;
+  document.getElementById('rentalStartDate').value = today;
+
+  calculateRentalCost();
+}
+
+function closeRentalModal() {
+  document.getElementById('rentalModal').style.display = 'none';
+  currentRentalProduct = null;
+  document.getElementById('rentalForm').reset();
+}
+
+function calculateRentalCost() {
+  const type = document.getElementById('rentalType').value;
+  const duration = parseInt(document.getElementById('rentalDuration').value) || 0;
+
+  let cost = 0;
+  if (type === 'daily') {
+    cost = rentalPriceDaily * duration;
+  } else {
+    const weeks = duration / 7;
+    cost = rentalPriceWeekly * weeks;
+  }
+
+  const deposit = 50;
+  const total = cost + deposit;
+
+  document.getElementById('rentalCostDisplay').textContent = `$${cost.toFixed(2)}`;
+  document.getElementById('rentalTotalDisplay').textContent = `$${total.toFixed(2)}`;
+}
+
+document.getElementById('rentalModal').addEventListener('click', function (e) {
+  if (e.target === this) {
+    closeRentalModal();
+  }
+});
+
+document.getElementById('rentalForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const type = document.getElementById('rentalType').value;
+  const duration = parseInt(document.getElementById('rentalDuration').value);
+  const startDate = document.getElementById('rentalStartDate').value;
+  const address = document.getElementById('rentalAddress').value;
+
+  let cost = 0;
+  if (type === 'daily') {
+    cost = rentalPriceDaily * duration;
+  } else {
+    cost = rentalPriceWeekly * (duration / 7);
+  }
+
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${API_URL}/shop/rentals/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        product_id: currentRentalProduct,
+        rental_type: type,
+        rental_start_date: startDate,
+        rental_duration_days: duration,
+        total_amount: cost + 50,
+        deposit_amount: 50,
+        delivery_address: address,
+      }),
+    });
+
+    if (response.ok) {
+      alert('Rental booked successfully! 📅');
+      closeRentalModal();
+    } else {
+      const data = await response.json();
+      alert('Failed to book rental: ' + (data.error || 'Unknown error'));
+    }
+  } catch (error) {
+    console.error('Error booking rental:', error);
+    alert('Failed to book rental');
+  }
+});
+
+// Initialize page load
+init();
+</script>
+<footer class="footer">
+        &copy; 2025 CoachMePlay. All rights reserved.
+    </footer>
+</body>
+</html>
